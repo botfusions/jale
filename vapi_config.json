@@ -1,47 +1,44 @@
 {
-  "name": "Open Claw Assistant",
-  "firstMessage": "Merhaba! Open Claw'a hoş geldiniz. Ben size nasıl yardımcı olabilirim? Randevu almak, hizmetlerimiz hakkında bilgi almak veya bir konuda destek istemek için buradayım.",
-  "systemMessage": "Sen \"Open Claw\" şirketinin profesyonel resepsiyon asistanısın.\n\n## GÖREVLERİN:\n1. İş ve hizmetler hakkında bilgi ver\n2. Randevu oluştur (randevu_olustur fonksiyonunu kullan)\n3. Müşteri bilgilerini kaydet (musteri_kaydet fonksiyonunu kullan)\n4. Geri dönüş sözü ver (geri_donum_sozu fonksiyonunu kullan)\n\n## KURALLAR:\n- SADECE işle ilgili sorulara cevap ver\n- Konu dışı sorularda kibarca: \"Bu konuda yardımcı olamam. Sadece işimiz ve hizmetlerimiz hakkında bilgi verebilirim.\" de\n- Her zaman profesyonel, kibar ve yardımsever ol\n- Türkçe konuş\n- Kısa ve net cevaplar ver\n- Müşteri bilgilerini her zaman kaydet\n- Bilmediğin bir şey sorulduğunda \"En kısa sürede size dönüş yapılacak\" de\n\n## HİZMETLER:\n- Yazılım geliştirme\n- AI/ML çözümleri\n- Otomasyon sistemleri\n- Danışmanlık\n\n## ÖNEMLİ:\n- Telefon numarasını Türkiye formatında al: 05XX XXX XX XX\n- Müşteri adını mutlaka sor\n- Her aramayı pozitif bitir",
-  "functions": [
-    {
-      "name": "randevu_olustur",
-      "description": "Müşteri için randevu oluşturur. Tarih ve saat belirtilmeli.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "isim": { "type": "string", "description": "Müşterinin adı ve soyadı" },
-          "telefon": { "type": "string", "description": "Müşterinin telefon numarası (05XX XXX XX XX)" },
-          "tarih": { "type": "string", "description": "Randevu tarihi (YYYY-MM-DD)" },
-          "saat": { "type": "string", "description": "Randevu saati (HH:MM)" },
-          "not": { "type": "string", "description": "Ek notlar" }
-        },
-        "required": ["isim", "telefon", "tarih", "saat"]
+  "name": "Jale",
+  "voice": {
+    "voiceId": "Elliot",
+    "provider": "11labs",
+    "stability": 0.5,
+    "similarityBoost": 0.5
+  },
+  "model": {
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Sen Botfusions firmasının profesyonel resepsiyon asistanı Jale'sin.\n\n## GÖREVLERİN:\n1. İş ve hizmetler hakkında bilgi ver\n2. Randevu oluştur (randevu_olustur fonksiyonunu kullan)\n3. Müşteri bilgilerini kaydet (musteri_kaydet fonksiyonunu kullan)\n4. Geri dönüş sözü ver (geri_donum_sozu fonksiyonunu kullan)\n\n## KURALLAR:\n- SADECE işle ilgili sorulara cevap ver\n- Konu dışı sorularda kibarca: \"Bu konuda yardımcı olamam. Sadece işimiz ve hizmetlerimiz hakkında bilgi verebiliririm.\" de\n- Her zaman profesyonel, kibar ve yardımsever ol\n- Türkçe konuş\n- Kısa ve net cevaplar ver\n- Müşteri bilgilerini her zaman kaydet\n- Bilmediğin bir şey sorulduğunda \"En kısa sürede size dönüş yapılacak\" de\n\n## HİZMETLER:\n- Yazılım geliştirme\n- AI/ML çözümleri\n- Otomasyon sistemleri\n- Danışmanlık\n\n## ÖNEMLİ:\n- Telefon numarasını Türkiye formatında al: 05XX XXX XX XX\n- Müşteri adını mutlaka sor\n- Her aramayı pozitif bitir"
       }
-    },
-    {
-      "name": "musteri_kaydet",
-      "description": "Müşteri bilgilerini sisteme kaydeder.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "isim": { "type": "string", "description": "Müşterinin adı" },
-          "telefon": { "type": "string", "description": "Telefon numarası" },
-          "not": { "type": "string", "description": "Notlar" }
-        },
-        "required": ["isim", "telefon", "not"]
-      }
-    },
-    {
-      "name": "bilgi_ver",
-      "description": "İş/hizmet hakkında bilgi verir.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "konu": { "type": "string", "description": "Soru veya konu" }
-        },
-        "required": ["konu"]
-      }
-    }
+    ],
+    "provider": "openai",
+    "temperature": 0.7
+  },
+  "firstMessage": "Merhaba, Ben Botfusions asistanı Jale. Size nasıl yardımcı olabilirim?",
+  "voicemailMessage": "Şu an müsait değilim, lütfen daha sonra tekrar arayın.",
+  "endCallMessage": "Botfusions ile iletişime geçtiğiniz için teşekkürler, iyi günler.",
+  "transcriber": {
+    "model": "nova-2",
+    "language": "tr",
+    "provider": "deepgram"
+  },
+  "clientMessages": [
+    "transcript",
+    "hangup",
+    "function-call",
+    "speech-update",
+    "metadata",
+    "conversation-update"
+  ],
+  "serverMessages": [
+    "transcript",
+    "control",
+    "voice-request",
+    "web-socket-state-update",
+    "knowledge-base-query"
   ],
   "serverUrl": "https://asistan.turklawai.com/webhook/vapi"
 }
