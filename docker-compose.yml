@@ -1,0 +1,51 @@
+services:
+  agent-claw:
+    build: .
+    container_name: agent_claw_ceo
+    restart: always
+    env_file: .env
+    volumes:
+      - ./summaries:/app/summaries
+      - ./memory:/app/memory
+      - ./research:/app/research
+      - ./downloads:/app/downloads
+    depends_on:
+      - redis
+    networks:
+      - claw_net
+
+  redis:
+    image: redis:alpine
+    container_name: claw_memory_cache
+    restart: always
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    networks:
+      - claw_net
+
+  # n8n holds the automation pipeline
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: claw_n8n_pipeline
+    restart: always
+    ports:
+      - '5678:5678'
+    environment:
+      - N8N_HOST=${DOMAIN_NAME:-localhost}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://${DOMAIN_NAME:-localhost}/
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - claw_net
+
+networks:
+  claw_net:
+    driver: bridge
+
+volumes:
+  redis_data:
+  n8n_data:
