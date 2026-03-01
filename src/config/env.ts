@@ -82,6 +82,10 @@ const envSchema = z.object({
 
   // OpenWeatherMap
   OPENWEATHERMAP_API_KEY: z.string().optional().default(''),
+
+  // Vapi
+  VAPI_PRIVATE_KEY: z.string().optional().default(''),
+  VAPI_WEBHOOK_SECRET: z.string().optional().default(''),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;
