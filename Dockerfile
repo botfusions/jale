@@ -1,36 +1,44 @@
-# --- Multi-Stage Build for Agent Claw Holding ---
+# --- Agent Claw Standard Docker Build ---
 
 # Stage 1: Builder
-FROM node:22 AS builder
-
-# Install pnpm and essentials
-RUN npm install -g pnpm
+FROM node:20 AS builder
 
 WORKDIR /app
 
-# Build Main App (JALE/CEO)
+# Sadece ana paket dosyalarını kopyala
+COPY package*.json ./
+
+# Bağımlılıkları yükle (npm kullanarak)
+RUN npm install
+
+# Projenin geri kalanını kopyala
 COPY . .
-RUN pnpm install && pnpm run build
+
+# Yan projeleri build sürecinden geçici olarak temizle
+RUN rm -rf yargi-cli summarize
+
+# Uygulamayı derle
+RUN npm run build
 
 # Stage 2: Production
-FROM node:22-slim
+FROM node:20-slim
 
 WORKDIR /app
 
-# Install production essentials
-RUN npm install -g pnpm pm2
+# PM2 kurulumu
+RUN npm install -g pm2
 
-# Copy built artifacts from builder
+# Builder stage'den sadece derlenmiş dosyaları ve modülleri al
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# Create necessary directories
+# Gerekli klasörleri oluştur
 RUN mkdir -p summaries memory research downloads
 
-# Environment and Port
+# Ortam değişkenleri ve Port
 ENV NODE_ENV=production
 EXPOSE 3000
 
-# Start with PM2 for process management (CEO protection)
+# PM2 ile başlat
 CMD ["pm2-runtime", "dist/index.js"]
