@@ -1,7 +1,7 @@
 # --- Multi-Stage Build for Agent Claw Holding ---
 
 # Stage 1: Builder
-FROM node:20-slim AS builder
+FROM node:22 AS builder
 
 # Install pnpm and essentials
 RUN npm install -g pnpm
@@ -9,19 +9,22 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # 1. Build yargi-cli (Hukuk Birimi)
-COPY yargi-cli/ ./yargi-cli/
-RUN cd yargi-cli && npm install && npm run build
+WORKDIR /app/yargi-cli
+COPY yargi-cli/ .
+RUN npm install && npm run build
 
 # 2. Build summarize (Kazıyıcı Birimi)
-COPY summarize/ ./summarize/
-RUN cd summarize && pnpm install --no-frozen-lockfile && pnpm run build
+WORKDIR /app/summarize
+COPY summarize/ .
+RUN pnpm install --no-frozen-lockfile && pnpm run build
 
 # 3. Build Main App (JALE/CEO)
+WORKDIR /app
 COPY . .
 RUN npm install && npm run build
 
 # Stage 2: Production
-FROM node:20-slim
+FROM node:22-slim
 
 WORKDIR /app
 
