@@ -11,10 +11,9 @@ temp/
 Thumbs.db
 
 # Data & Cache (Local Only)
-borsaci/
-gogcli/
-summarize/
-memory/
+summaries/
+research/
+downloads/
 architecture_reports/
 yargi-cli/
 .claude/
