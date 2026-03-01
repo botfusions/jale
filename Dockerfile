@@ -9,22 +9,16 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # 1. Build yargi-cli (Hukuk Birimi)
-COPY yargi-cli/package*.json ./yargi-cli/
-RUN cd yargi-cli && npm install
 COPY yargi-cli/ ./yargi-cli/
-RUN cd yargi-cli && npm run build
+RUN cd yargi-cli && npm install && npm run build
 
 # 2. Build summarize (Kazıyıcı Birimi)
-COPY summarize/package.json summarize/pnpm-lock.yaml summarize/pnpm-workspace.yaml ./summarize/
-RUN cd summarize && pnpm install --frozen-lockfile
 COPY summarize/ ./summarize/
-RUN cd summarize && pnpm run build
+RUN cd summarize && pnpm install --no-frozen-lockfile && pnpm run build
 
 # 3. Build Main App (JALE/CEO)
-COPY package*.json ./
-RUN npm install
 COPY . .
-RUN npm run build
+RUN npm install && npm run build
 
 # Stage 2: Production
 FROM node:20-slim
