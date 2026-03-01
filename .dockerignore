@@ -18,3 +18,7 @@ docker-compose.yml
 README*.md
 docs
 tests
+yargi-cli
+summarize
+borsaci
+gogcli

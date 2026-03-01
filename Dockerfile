@@ -1,27 +1,24 @@
-# --- Agent Claw Standard Docker Build ---
+# --- Agent Claw Optimized Docker Build ---
 
 # Stage 1: Builder
-FROM node:20 AS builder
+FROM node:22 AS builder
 
 WORKDIR /app
 
 # Sadece ana paket dosyalarını kopyala
 COPY package*.json ./
 
-# Bağımlılıkları yükle (npm kullanarak)
-RUN npm install
+# Bağımlılıkları yükle (Legacy peer deps ve verbose log ile)
+RUN npm install --legacy-peer-deps
 
-# Projenin geri kalanını kopyala
+# Projenin geri kalanını kopyala (yargi-cli ve summarize .dockerignore ile hariç tutuldu)
 COPY . .
-
-# Yan projeleri build sürecinden geçici olarak temizle
-RUN rm -rf yargi-cli summarize
 
 # Uygulamayı derle
 RUN npm run build
 
 # Stage 2: Production
-FROM node:20-slim
+FROM node:22-slim
 
 WORKDIR /app
 
