@@ -26,26 +26,30 @@ export function registerToolCommands(bot: Bot): void {
       const { promisify } = await import('util');
       const execFileAsync = promisify(execFile);
 
-      const { stdout } = await execFileAsync(
-        'npx',
-        [
-          '-y',
-          '@steipete/summarize',
-          url,
-          '--plain',
-          '--length',
-          'medium',
-          '--lang',
-          'tr',
-          '--timeout',
-          '60s',
-        ],
-        {
-          timeout: 90000,
-          maxBuffer: 1024 * 1024,
-          shell: true,
-        }
-      );
+      const localPath = path.resolve(process.cwd(), 'summarize/dist/cli.js');
+      const useLocal = fs.existsSync(localPath);
+
+      const cmd = useLocal ? 'node' : 'npx';
+      const args = useLocal
+        ? [localPath, url, '--plain', '--length', 'medium', '--lang', 'tr', '--timeout', '60s']
+        : [
+            '-y',
+            '@steipete/summarize',
+            url,
+            '--plain',
+            '--length',
+            'medium',
+            '--lang',
+            'tr',
+            '--timeout',
+            '60s',
+          ];
+
+      const { stdout } = await execFileAsync(cmd, args, {
+        timeout: 90000,
+        maxBuffer: 1024 * 1024,
+        shell: true,
+      });
 
       const summary = stdout.trim();
       if (summary) {

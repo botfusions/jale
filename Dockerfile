@@ -5,16 +5,20 @@ FROM node:22 AS builder
 
 WORKDIR /app
 
-# Sadece ana paket dosyalarını kopyala
-COPY package*.json ./
+# pnpm kurulumu
+RUN npm install -g pnpm
 
-# Bağımlılıkları yükle (Legacy peer deps ve verbose log ile)
+# Ana paket dosyalarını kopyala ve yükle
+COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
-# Projenin geri kalanını kopyala (yargi-cli ve summarize .dockerignore ile hariç tutuldu)
+# Tüm projeyi kopyala (artık .dockerignore summarize'a izin veriyor)
 COPY . .
 
-# Uygulamayı derle
+# Summarize bileşenini derle
+RUN cd summarize && pnpm install && pnpm build
+
+# Ana uygulamayı derle
 RUN npm run build
 
 # Stage 2: Production
@@ -22,13 +26,16 @@ FROM node:22-slim
 
 WORKDIR /app
 
-# PM2 kurulumu
-RUN npm install -g pm2
+# PM2 ve pnpm kurulumu
+RUN npm install -g pm2 pnpm
 
 # Builder stage'den sadece derlenmiş dosyaları ve modülleri al
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
+
+# Summarize bileşenini builder'dan al (Eğer built version lazımsa)
+COPY --from=builder /app/summarize ./summarize
 
 # Gerekli klasörleri oluştur
 RUN mkdir -p summaries memory research downloads
