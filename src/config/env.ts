@@ -24,7 +24,7 @@ const envSchema = z.object({
     .transform((v) => parseFloat(v)),
 
   // System Prompt
-  SYSTEM_PROMPT_PATH: z.string().default('memory/soul.md'),
+  SYSTEM_PROMPT_PATH: z.string().default('data_memory/soul.md'),
 
   // Transcription
   TRANSCRIPTION_API_KEY: z.string().optional().default(''),

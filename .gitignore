@@ -15,13 +15,20 @@ summaries/
 research/
 downloads/
 architecture_reports/
+data_memory/
 yargi-cli/
+summarize/
+borsaci/
+gogcli/
 .claude/
 .clawdbot/
 .gemini/
 
 # Secrets & Credentials
 *.json
+# Allow Source
+!src/
+!src/memory/
 !package.json
 !tsconfig.json
 !composer.json
