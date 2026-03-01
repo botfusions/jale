@@ -2,7 +2,7 @@
   "name": "Jale",
   "voice": {
     "voiceId": "Elliot",
-    "provider": "11labs",
+    "provider": "vapi",
     "stability": 0.5,
     "similarityBoost": 0.5
   },
