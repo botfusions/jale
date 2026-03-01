@@ -62,6 +62,10 @@ export async function handleVapiWebhook(
 
       case 'transcript':
         safeLog('Call transcript', { callId: message.callId, transcript: message.transcript });
+        if (message.transcript) {
+           // Konuşmayı Jale'nin de hatırlayabileceği ortak hafızaya kaydet
+           await receptionist.saveTranscript(message.transcript, message.callId);
+        }
         res.json({ result: 'Transcript received' });
         break;
 

@@ -15,6 +15,7 @@
 import { storeMemory, recallMemories } from '../memory/vector.service';
 import { appendMemoryLog } from '../memory/core.memory';
 import { safeLog, safeError } from '../utils/logger';
+import { CEOAgent } from './ceo-agent';
 
 // Hizmet bilgileri
 const SERVICES = {
@@ -38,6 +39,11 @@ const SERVICES = {
 
 export class ReceptionistAgent {
   private name: string = 'RESEPSİYON';
+  private ceoAgent: CEOAgent;
+
+  constructor() {
+    this.ceoAgent = new CEOAgent();
+  }
 
   /**
    * Randevu oluştur
@@ -142,7 +148,15 @@ export class ReceptionistAgent {
         return `Bu konuda yardımcı olamam. Sadece işimiz ve hizmetlerimiz hakkında bilgi verebilirim. Başka bir sorunuz var mı?`;
       }
 
-      // Bilinmeyen konu - geri dönüş sözü
+      // Bilinmeyen konu veya karmaşık soru - JALE'ye (CEO) danış
+      safeLog('Consulting Jale (CEO) for unknown topic', { konu });
+      const jaleResponse = await this.ceoAgent.processRequest(konu);
+      
+      if (jaleResponse && jaleResponse.content) {
+        return jaleResponse.content;
+      }
+
+      // Fallback - geri dönüş sözü
       return `Bu konu hakkında size en kısa sürede detaylı bilgi verilecektir. İletişim bilgilerinizi alabilir miyim?`;
     } catch (error: any) {
       safeError('Failed to get info', error);
