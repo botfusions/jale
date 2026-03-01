@@ -11,7 +11,7 @@ WORKDIR /app
 # 1. Build yargi-cli (Hukuk Birimi)
 WORKDIR /app/yargi-cli
 COPY yargi-cli/ .
-RUN npm install && npm run build
+RUN pnpm install && pnpm run build
 
 # 2. Build summarize (Kazıyıcı Birimi)
 WORKDIR /app/summarize
@@ -21,7 +21,7 @@ RUN pnpm install --no-frozen-lockfile && pnpm run build
 # 3. Build Main App (JALE/CEO)
 WORKDIR /app
 COPY . .
-RUN npm install && npm run build
+RUN pnpm install && pnpm run build
 
 # Stage 2: Production
 FROM node:22-slim
