@@ -25,29 +25,29 @@
 
 ## 🌟 Özellikler
 
-| Özellik               | Durum    | Açıklama                                          |
-| --------------------- | -------- | ------------------------------------------------- |
-| 💬 Metin Sohbet       | ✅ Aktif | OpenRouter üzerinden LLM ile sohbet               |
-| 🎤 Sesli Mesaj        | ✅ Aktif | Ses → metin çevirisi + yanıt                      |
-| 🔊 Sesli Yanıt (TTS)  | ✅ Aktif | "reply with voice" ile sesli cevap                |
-| 🧠 Uzun Süreli Hafıza | ✅ Aktif | Qdrant vektör DB ile hatırlama/çağırma            |
-| 💾 Sohbet Geçmişi     | ✅ Aktif | JSON persist — restart sonrası devam eder         |
-| 🔄 Retry Mekanizması  | ✅ Aktif | Exponential backoff, 429/5xx korumalı             |
-| 💓 Günlük Heartbeat   | ✅ Aktif | Her gün 08:00'de check-in mesajı                  |
-| 📅 Takvim Özeti       | ✅ Aktif | Google Calendar salt okunur entegrasyon           |
-| 📧 E-posta Özeti      | ✅ Aktif | Gmail okunmamış maillar + sesli okuma             |
-| 🔐 Güvenlik           | ✅ Aktif | Allowlist, secret masking, log redaksiyon         |
-| 🚀 Deployment         | ✅ Hazır | Docker + docker-compose + Railway config          |
-| 🌐 Web Arama          | ✅ Aktif | İnternetten bilgi arama ve özetleme               |
-| ⛅ Hava Durumu        | ✅ Aktif | Güncel hava durumu bilgisi (Open-Meteo)           |
-| 🌍 Çeviri             | ✅ Aktif | Metinleri anında ilgili dile çevirme              |
-| 📰 Günlük Brifing     | ✅ Aktif | 🆕 Sabah raporu (KAYA, Hava durumu)               |
-| 📈 Borsacı Agent      | ✅ Aktif | 🆕 KAYA (Finans, Borsa, Kripto Analizi)           |
-| 💻 Yazılım Uzmanı     | ✅ Aktif | 🆕 RECEP (Kod Yazma, CLI, Debugging)              |
-| ⚖️ Hukuk Uzmanı       | ✅ Aktif | 🆕 AVUKAT KEMAL (Yargı Mevzuat, Karar Arama)      |
-| 🤝 Multi-Agent Swarm  | ✅ Aktif | JALE (Yönetici) liderliğinde alt ajan delegasyonu |
-| 📞 AI Resepsiyon      | ✅ Aktif | 🆕 AYÇA (Vapi Sesli Telefon Asistanı)             |
-| 🛠️ Tool Calling       | ✅ Aktif | LLM'in otonom yetenek (skill) çağırması           |
+| Özellik               | Durum    | Açıklama                                            |
+| --------------------- | -------- | --------------------------------------------------- |
+| 💬 Metin Sohbet       | ✅ Aktif | OpenRouter üzerinden LLM ile sohbet                 |
+| 🎤 Sesli Mesaj        | ✅ Aktif | Ses → metin çevirisi + yanıt                        |
+| 🔊 Sesli Yanıt (TTS)  | ✅ Aktif | "reply with voice" ile sesli cevap                  |
+| 🧠 Uzun Süreli Hafıza | ✅ Aktif | Qdrant vektör DB ile hatırlama/çağırma              |
+| 💾 Sohbet Geçmişi     | ✅ Aktif | JSON persist — restart sonrası devam eder           |
+| 🔄 Retry Mekanizması  | ✅ Aktif | Exponential backoff, 429/5xx korumalı               |
+| 💓 Günlük Heartbeat   | ✅ Aktif | Her gün 08:00'de check-in mesajı                    |
+| 📅 Takvim Özeti       | ✅ Aktif | Google Calendar salt okunur entegrasyon             |
+| 📧 E-posta Özeti      | ✅ Aktif | Gmail okunmamış maillar + sesli okuma               |
+| 🔐 Güvenlik           | ✅ Aktif | Allowlist, secret masking, log redaksiyon           |
+| 🚀 Deployment         | ✅ Hazır | Docker + docker-compose + Railway config            |
+| 🌐 Web Arama          | ✅ Aktif | İnternetten bilgi arama ve özetleme                 |
+| ⛅ Hava Durumu        | ✅ Aktif | Güncel hava durumu bilgisi (Open-Meteo)             |
+| 🌍 Çeviri             | ✅ Aktif | Metinleri anında ilgili dile çevirme                |
+| 📰 Günlük Brifing     | ✅ Aktif | 🆕 Sabah raporu (KAYA, Hava durumu)                 |
+| 📈 Borsacı Agent      | ✅ Aktif | 🆕 KAYA (Finans, Borsa, Kripto Analizi)             |
+| 💻 Yazılım Uzmanı     | ✅ Aktif | 🆕 RECEP (Terminal Erişimi, Kurulum, CLI, Kod)      |
+| ⚖️ Hukuk Uzmanı       | ✅ Aktif | 🆕 AVUKAT KEMAL (Yargı Mevzuat, Karar Arama)        |
+| 🤝 Multi-Agent Swarm  | ✅ Aktif | JALE (Ekosistem Sahibi) liderliğinde otonom yönetim |
+| 📞 AI Resepsiyon      | ✅ Aktif | 🆕 AYÇA (Vapi Sesli Telefon Asistanı)               |
+| 🛠️ Tool Calling       | ✅ Aktif | LLM'in otonom yetenek (skill) çağırması             |
 
 ---
 
@@ -58,7 +58,7 @@ agent-claw/
 ├── src/
 │   ├── index.ts                 # Ana giriş noktası (modüler)
 │   ├── agents/                  # 🆕 Ajan (Swarm) Modülleri
-│   │   ├── ceo-agent.ts         # JALE (Yönetici) - Strateji ve Otonom Yönetim
+│   │   ├── ceo-agent.ts         # JALE (CEO) - Fiziksel Ekosistem ve Strateji
 │   │   ├── receptionist-agent.ts# AYÇA (Resepsiyon) - Vapi Telefon Karşılama
 │   │   ├── coo-agent.ts         # OSMAN (COO) - İş Akışı Planlama
 │   │   └── borsaci-agent.ts     # 🆕 KAYA (Borsacı) - Finansal Analiz
@@ -205,30 +205,30 @@ npm start
 
 ## 📱 Komutlar
 
-| Komut               | Açıklama                                          |
-| ------------------- | ------------------------------------------------- |
-| `/start`            | Hoş geldin mesajı                                 |
-| `/help`             | Yardım menüsü                                     |
-| `/status`           | Bot durum bilgisi (model, sıcaklık, token limiti) |
-| `/remember <metin>` | Hafızaya bilgi kaydet (Qdrant)                    |
-| `/recall <sorgu>`   | Hafızadan bilgi çağır (semantic search)           |
-| `/today`            | Bugünkü takvim etkinlikleri                       |
-| `/calendar`         | Yarınki takvim etkinlikleri                       |
-| `/week`             | Haftalık takvim özeti                             |
-| `/todayoku`         | Takvimi sesli oku (TTS)                           |
-| `/mail`             | Okunmamış e-postalar                              |
-| `/mailoku`          | E-postaları sesli oku (TTS)                       |
-| `/voice <metin>`    | Metni sesli söyle (TTS)                           |
-| `/ozet <url>`       | Web sayfasını özetle                              |
-| `/skills`           | Skill listesi                                     |
-| `/skill <isim>`     | Skill aç/kapat                                    |
-| `/doctor`           | Sistemi tarar ve onarır                           |
-| `/heartbeat_test`   | Günlük hatırlatma testi                           |
-| `/jale <mesaj>`     | CEO Jale'den otonom stratejik yönetim isteği      |
-| `/osman <mesaj>`    | COO Osman'dan projelendirme ve iş planı isteği    |
-| `/recep <mesaj>`    | Yazılım uzmanı RECEP'ten kodlama/teknik istek     |
-| `/yargi <sorgu>`    | AVUKAT KEMAL ile hukuki veritabanı sorgulaması    |
-| `/research <sorgu>` | Araştırmacı ajanla derinlemesine LLM araştırması  |
+| Komut               | Açıklama                                                   |
+| ------------------- | ---------------------------------------------------------- |
+| `/start`            | Hoş geldin mesajı                                          |
+| `/help`             | Yardım menüsü                                              |
+| `/status`           | Bot durum bilgisi (model, sıcaklık, token limiti)          |
+| `/remember <metin>` | Hafızaya bilgi kaydet (Qdrant)                             |
+| `/recall <sorgu>`   | Hafızadan bilgi çağır (semantic search)                    |
+| `/today`            | Bugünkü takvim etkinlikleri                                |
+| `/calendar`         | Yarınki takvim etkinlikleri                                |
+| `/week`             | Haftalık takvim özeti                                      |
+| `/todayoku`         | Takvimi sesli oku (TTS)                                    |
+| `/mail`             | Okunmamış e-postalar                                       |
+| `/mailoku`          | E-postaları sesli oku (TTS)                                |
+| `/voice <metin>`    | Metni sesli söyle (TTS)                                    |
+| `/ozet <url>`       | Web sayfasını özetle                                       |
+| `/skills`           | Skill listesi                                              |
+| `/skill <isim>`     | Skill aç/kapat                                             |
+| `/doctor`           | Sistemi tarar ve onarır                                    |
+| `/heartbeat_test`   | Günlük hatırlatma testi                                    |
+| `/jale <mesaj>`     | Fiziksel ekosistemin yönetimi ve stratejik otonom istekler |
+| `/osman <mesaj>`    | COO Osman'dan projelendirme ve iş planı isteği             |
+| `/recep <mesaj>`    | RECEP'ten yazılım kurulumu, git ve terminal işlemleri      |
+| `/yargi <sorgu>`    | AVUKAT KEMAL ile hukuki veritabanı sorgulaması             |
+| `/research <sorgu>` | Araştırmacı ajanla derinlemesine LLM araştırması           |
 
 ---
 
@@ -243,7 +243,7 @@ Bot, doğrudan doğal dilinizi anlayarak çeşitli modülleri (yetenekleri) arka
 | **🌍 Çeviri**         | `çevir`, `translate`, `ingilizce` | _"Güneşli kelimesini İngilizceye çevir"_           |
 | **📰 Günlük Brifing** | `brifing`, `günün özeti`          | _"Bana sabah raporumu sunar mısın?"_               |
 | **📈 Borsacı**        | `borsa`, `asels`, `bitcoin`       | _"ASELS hissesi için analiz yapar mısın?"_         |
-| **💻 Yazılım**        | `kod yaz`, `software`, `yazılım`  | _"Node.js ile bir API auth middleware yaz"_        |
+| **💻 Yazılım**        | `kur`, `git clone`, `software`    | _"Sisteme XYZ kütüphanesini kur veya repoyu çek"_  |
 | **⚖️ Hukuk**          | `hukuk`, `yargı`, `yargıtay`      | _"Mülkiyet hakkı ile ilgili yargıtay kararı bul"_  |
 | **🧠 Araştırmacı**    | `araştır`, `analiz et`, `analiz`  | _"Yapay zeka trendlerini derinlemesine analiz et"_ |
 | **💡 Reklamcı**       | `reklam`, `kampanya`, `pazarlama` | _"Yeni ürünümüz için yaratıcı bir kampanya yap"_   |
