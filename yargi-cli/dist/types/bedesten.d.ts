@@ -1,4 +1,4 @@
-import type { CourtType } from "./common.js";
+import type { CourtType } from './common.js';
 export interface BedestenSearchData {
     pageSize: number;
     pageNumber: number;

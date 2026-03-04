@@ -6,16 +6,16 @@ export class BaseClient {
         this.baseUrl = baseUrl;
         this.timeoutMs = timeoutMs;
         this.headers = {
-            Accept: "*/*",
-            "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
-            AdaletApplicationName: "UyapMevzuat",
-            "Content-Type": "application/json; charset=utf-8",
-            Origin: "https://mevzuat.adalet.gov.tr",
-            Referer: "https://mevzuat.adalet.gov.tr/",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-site",
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+            Accept: '*/*',
+            'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
+            AdaletApplicationName: 'UyapMevzuat',
+            'Content-Type': 'application/json; charset=utf-8',
+            Origin: 'https://mevzuat.adalet.gov.tr',
+            Referer: 'https://mevzuat.adalet.gov.tr/',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-site',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
         };
     }
     async post(endpoint, body) {
@@ -23,7 +23,7 @@ export class BaseClient {
         const timer = setTimeout(() => controller.abort(), this.timeoutMs);
         try {
             const response = await fetch(`${this.baseUrl}${endpoint}`, {
-                method: "POST",
+                method: 'POST',
                 headers: this.headers,
                 body: JSON.stringify(body),
                 signal: controller.signal,

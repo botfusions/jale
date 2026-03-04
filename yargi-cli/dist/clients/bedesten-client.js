@@ -1,15 +1,15 @@
-import { BaseClient } from "./base-client.js";
-import { getFullBirimAdi } from "../enums/chambers.js";
-import { convertHtmlToMarkdown } from "../converters/html-to-markdown.js";
+import { BaseClient } from './base-client.js';
+import { getFullBirimAdi } from '../enums/chambers.js';
+import { convertHtmlToMarkdown } from '../converters/html-to-markdown.js';
 export class BedestenClient extends BaseClient {
-    static SEARCH_ENDPOINT = "/emsal-karar/searchDocuments";
-    static DOCUMENT_ENDPOINT = "/emsal-karar/getDocumentContent";
+    static SEARCH_ENDPOINT = '/emsal-karar/searchDocuments';
+    static DOCUMENT_ENDPOINT = '/emsal-karar/getDocumentContent';
     constructor(timeoutMs) {
-        super("https://bedesten.adalet.gov.tr", timeoutMs);
+        super('https://bedesten.adalet.gov.tr', timeoutMs);
     }
     async searchDocuments(request) {
         // Map abbreviated birimAdi to full Turkish name
-        const mapped = getFullBirimAdi(request.data.birimAdi ?? "ALL");
+        const mapped = getFullBirimAdi(request.data.birimAdi ?? 'ALL');
         const body = {
             data: {
                 ...request.data,
@@ -33,21 +33,21 @@ export class BedestenClient extends BaseClient {
     async getDocumentAsMarkdown(documentId) {
         const request = {
             data: { documentId },
-            applicationName: "UyapMevzuat",
+            applicationName: 'UyapMevzuat',
         };
         const response = await this.post(BedestenClient.DOCUMENT_ENDPOINT, request);
         if (!response.data?.content) {
-            throw new Error("Document response does not contain content");
+            throw new Error('Document response does not contain content');
         }
         if (!response.data.mimeType) {
-            throw new Error("Document response does not contain mimeType");
+            throw new Error('Document response does not contain mimeType');
         }
         // Decode base64 content
-        const contentBytes = Buffer.from(response.data.content, "base64");
+        const contentBytes = Buffer.from(response.data.content, 'base64');
         const mimeType = response.data.mimeType;
         let markdownContent = null;
-        if (mimeType === "text/html") {
-            const html = contentBytes.toString("utf-8");
+        if (mimeType === 'text/html') {
+            const html = contentBytes.toString('utf-8');
             markdownContent = convertHtmlToMarkdown(html);
         }
         else {
