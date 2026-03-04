@@ -63,8 +63,8 @@ export async function handleVapiWebhook(
       case 'transcript':
         safeLog('Call transcript', { callId: message.callId, transcript: message.transcript });
         if (message.transcript) {
-           // Konuşmayı Jale'nin de hatırlayabileceği ortak hafızaya kaydet
-           await receptionist.saveTranscript(message.transcript, message.callId);
+          // Konuşmayı Jale'nin de hatırlayabileceği ortak hafızaya kaydet
+          await receptionist.saveTranscript(message.transcript, message.callId);
         }
         res.json({ result: 'Transcript received' });
         break;
@@ -174,7 +174,8 @@ export const VAPI_FUNCTIONS = [
     type: 'function',
     function: {
       name: 'musteri_kaydet',
-      description: 'Müşteri bilgilerini sisteme kaydeder. Geri dönüş yapılacak müşteriler için kullanılır.',
+      description:
+        'Müşteri bilgilerini sisteme kaydeder. Geri dönüş yapılacak müşteriler için kullanılır.',
       parameters: {
         type: 'object',
         properties: {

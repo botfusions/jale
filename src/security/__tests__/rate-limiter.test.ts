@@ -30,7 +30,9 @@ async function testRateLimiter() {
   console.log('\n✅ Test 3: Reset sonrası istek');
   await new Promise((resolve) => setTimeout(resolve, 100)); // Kısa bekle
   const afterReset = limiter.checkLimit(testUserId);
-  console.log(`  Time window sonrası: allowed=${afterReset.allowed}, remaining=${afterReset.remaining}`);
+  console.log(
+    `  Time window sonrası: allowed=${afterReset.allowed}, remaining=${afterReset.remaining}`
+  );
 
   console.log('\n✅ Test 4: Çoklu kullanıcı');
   const user1 = 'user1';

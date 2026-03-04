@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 async function testVapiWebhook() {
   const url = 'http://localhost:3000/webhook/vapi';
-  
+
   const payload = {
     message: {
       type: 'function-call',
@@ -10,21 +10,21 @@ async function testVapiWebhook() {
       functionCall: {
         name: 'bilgi_ver',
         parameters: {
-          konu: 'yazılım geliştirme'
-        }
-      }
-    }
+          konu: 'yazılım geliştirme',
+        },
+      },
+    },
   };
 
   console.log('Sending test request to Vapi webhook...');
-  
+
   try {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     const data = await response.json();

@@ -6,6 +6,7 @@ import { Bot } from 'grammy';
 import fs from 'fs';
 import { getUnreadEmails, formatEmailSummary } from '../mcp/gmail';
 import { safeError } from '../utils/logger';
+import { safeReply } from '../utils/telegram.helpers';
 // import { adminOnly } from '../telegram/auth'; // Removed
 
 export function registerMailCommands(bot: Bot): void {
@@ -15,7 +16,7 @@ export function registerMailCommands(bot: Bot): void {
       await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
       const emails = await getUnreadEmails(5);
       const summary = formatEmailSummary(emails, '📧 Okunmamış E-postalar');
-      await ctx.reply(summary, { parse_mode: 'Markdown' });
+      await safeReply(ctx, summary);
     } catch (error) {
       await ctx.reply('❌ E-posta bilgisi alınamadı.');
     }
@@ -41,7 +42,7 @@ export function registerMailCommands(bot: Bot): void {
 
       // Send text version first
       const summary = formatEmailSummary(emails, '📧 Okunmamış E-postalar');
-      await ctx.reply(summary, { parse_mode: 'Markdown' });
+      await safeReply(ctx, summary);
 
       // Then read aloud
       await ctx.api.sendChatAction(ctx.chat!.id, 'record_voice');

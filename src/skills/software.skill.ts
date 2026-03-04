@@ -7,7 +7,17 @@ export const softwareSkill: Skill = {
   displayName: 'Yazılım & Kod',
   emoji: '💻',
   description: 'Karmaşık kod yapıları, CLI araçları ve yazılım geliştirme konularında uzmandır.',
-  triggers: ['kod yaz', 'kodla', 'yazılım', 'software', 'script', 'kod üret', 'typescript yaz', 'python yaz', 'hata ayıkla'],
+  triggers: [
+    'kod yaz',
+    'kodla',
+    'yazılım',
+    'software',
+    'script',
+    'kod üret',
+    'typescript yaz',
+    'python yaz',
+    'hata ayıkla',
+  ],
   enabled: true,
   execute: async (ctx: SkillContext): Promise<SkillResult> => {
     try {

@@ -4,11 +4,12 @@
 
 import { Bot } from 'grammy';
 import { skillManager } from '../skills';
+import { safeReply } from '../utils/telegram.helpers';
 // import { adminOnly } from '../telegram/auth'; // Removed
 
 export function registerSkillCommands(bot: Bot): void {
   bot.command('skills', async (ctx) => {
-    await ctx.reply(skillManager.formatSkillsList(), { parse_mode: 'Markdown' });
+    await safeReply(ctx, skillManager.formatSkillsList());
   });
 
   bot.command('skill', async (ctx) => {
@@ -17,7 +18,7 @@ export function registerSkillCommands(bot: Bot): void {
       .trim()
       .toLowerCase();
     if (!name) {
-      await ctx.reply('⚠️ Kullanım: `/skill <isim>` — skill aç/kapat', { parse_mode: 'Markdown' });
+      await safeReply(ctx, '⚠️ Kullanım: `/skill <isim>` — skill aç/kapat');
       return;
     }
     const result = skillManager.toggle(name);
@@ -26,7 +27,7 @@ export function registerSkillCommands(bot: Bot): void {
     } else {
       const emoji = result ? '🟢' : '🔴';
       const status = result ? 'açıldı' : 'kapatıldı';
-      await ctx.reply(`${emoji} **${name}** skill'i ${status}!`, { parse_mode: 'Markdown' });
+      await safeReply(ctx, `${emoji} **${name}** skill'i ${status}!`);
     }
   });
 }

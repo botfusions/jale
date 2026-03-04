@@ -97,7 +97,7 @@ export class MemoryManager {
   private writeToArchive(items: MemoryItem[]): void {
     const dateStr = new Date().toISOString().split('T')[0];
     const archiveFile = path.join(ARCHIVE_DIR, `archive_${dateStr}.json`);
-    
+
     let existingArchive: MemoryItem[] = [];
     if (fs.existsSync(archiveFile)) {
       try {
@@ -113,8 +113,6 @@ export class MemoryManager {
 
   public search(query: string, limit: number = 10): MemoryItem[] {
     const queryLower = query.toLowerCase();
-    return this.memories
-      .filter(m => m.text.toLowerCase().includes(queryLower))
-      .slice(0, limit);
+    return this.memories.filter((m) => m.text.toLowerCase().includes(queryLower)).slice(0, limit);
   }
 }

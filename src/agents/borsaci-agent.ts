@@ -16,7 +16,7 @@ export class BorsaciAgent {
       // Güvenli: Argümanları ayrı ayrı geçerek command injection'i önle
       const child = spawn('uv', ['run', 'python', 'run_query.py', query], {
         cwd: borsaciDir,
-        shell: false // Güvenlik: shell'i kullanma
+        shell: false, // Güvenlik: shell'i kullanma
       });
 
       let stdout = '';
@@ -32,7 +32,11 @@ export class BorsaciAgent {
 
       child.on('error', (error) => {
         const errMsg = error.message;
-        if (errMsg.includes('credentials') || errMsg.includes('missing api key') || errMsg.includes('OPENROUTER_API_KEY')) {
+        if (
+          errMsg.includes('credentials') ||
+          errMsg.includes('missing api key') ||
+          errMsg.includes('OPENROUTER_API_KEY')
+        ) {
           resolve(`ERROR: Borsacı yetkilendirme (Auth) hatası.\nTerminal Çıktısı: ${errMsg}`);
         } else {
           resolve(`ERROR: Hata oluştu: ${errMsg}`);
@@ -43,7 +47,7 @@ export class BorsaciAgent {
         if (code !== 0 && !stderr) {
           resolve(`ERROR: Process exited with code ${code}`);
         } else {
-          resolve(stdout || "Sonuç bulunamadı.");
+          resolve(stdout || 'Sonuç bulunamadı.');
         }
       });
     });
@@ -67,13 +71,15 @@ Your primary role is to analyze stock markets, perform crypto analysis, and gene
         type: 'function',
         function: {
           name: 'get_market_analysis',
-          description: 'Fetches real-time market data, company briefs, and analysis via the Borsaci MCP system.',
+          description:
+            'Fetches real-time market data, company briefs, and analysis via the Borsaci MCP system.',
           parameters: {
             type: 'object',
             properties: {
               query: {
                 type: 'string',
-                description: 'The exact financial query to run (e.g., "ASELS hissesi için analiz", "Bitcoin son durum").',
+                description:
+                  'The exact financial query to run (e.g., "ASELS hissesi için analiz", "Bitcoin son durum").',
               },
             },
             required: ['query'],
@@ -83,7 +89,13 @@ Your primary role is to analyze stock markets, perform crypto analysis, and gene
     ];
 
     // First call to kimi-k2.5 to see if it needs the tool
-    let response = await chat(query, history, `Role: Financial Analyst (KAYA)\n${systemPrompt}`, tools, 'moonshotai/kimi-k2.5');
+    let response = await chat(
+      query,
+      history,
+      `Role: Financial Analyst (KAYA)\n${systemPrompt}`,
+      tools,
+      'moonshotai/kimi-k2.5'
+    );
 
     if (response.tool_calls && response.tool_calls.length > 0) {
       safeLog('BorsaciAgent Tool Call Initiated', { calls: response.tool_calls.length });
@@ -115,7 +127,13 @@ Your primary role is to analyze stock markets, perform crypto analysis, and gene
 
       // Final analysis by Kimi-k2.5
       safeLog(`${this.name} synthesizing tool results with kimi-k2.5`);
-      response = await chat(null, currentHistory, `Role: Financial Analyst (KAYA)\n${systemPrompt}`, undefined, 'moonshotai/kimi-k2.5');
+      response = await chat(
+        null,
+        currentHistory,
+        `Role: Financial Analyst (KAYA)\n${systemPrompt}`,
+        undefined,
+        'moonshotai/kimi-k2.5'
+      );
     }
 
     safeLog(`${this.name} analysis ready`);

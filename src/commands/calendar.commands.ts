@@ -5,12 +5,13 @@
 import { Bot } from 'grammy';
 import fs from 'fs';
 import {
+  formatCalendarSummary,
   getTodayEvents,
   getTomorrowEvents,
   getUpcomingEvents,
-  formatCalendarSummary,
 } from '../mcp/calendar';
 import { safeError } from '../utils/logger';
+import { safeReply } from '../utils/telegram.helpers';
 // import { adminOnly } from '../telegram/auth'; // Removed
 
 export function registerCalendarCommands(bot: Bot): void {
@@ -19,7 +20,7 @@ export function registerCalendarCommands(bot: Bot): void {
       await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
       const events = await getTomorrowEvents();
       const summary = formatCalendarSummary(events, '📅 Yarınki Takvim');
-      await ctx.reply(summary, { parse_mode: 'Markdown' });
+      await safeReply(ctx, summary);
     } catch (error) {
       await ctx.reply('❌ Takvim bilgisi alınamadı.');
     }
@@ -30,7 +31,7 @@ export function registerCalendarCommands(bot: Bot): void {
       await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
       const events = await getTodayEvents();
       const summary = formatCalendarSummary(events, '📅 Bugünkü Takvim');
-      await ctx.reply(summary, { parse_mode: 'Markdown' });
+      await safeReply(ctx, summary);
     } catch (error) {
       await ctx.reply('❌ Takvim bilgisi alınamadı.');
     }
@@ -41,7 +42,7 @@ export function registerCalendarCommands(bot: Bot): void {
       await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
       const events = await getUpcomingEvents(7);
       const summary = formatCalendarSummary(events, '📅 Bu Hafta');
-      await ctx.reply(summary, { parse_mode: 'Markdown' });
+      await safeReply(ctx, summary);
     } catch (error) {
       await ctx.reply('❌ Takvim bilgisi alınamadı.');
     }
@@ -69,7 +70,7 @@ export function registerCalendarCommands(bot: Bot): void {
 
       // Text first
       const summary = formatCalendarSummary(events, '📅 Bugünkü Takvim');
-      await ctx.reply(summary, { parse_mode: 'Markdown' });
+      await safeReply(ctx, summary);
 
       // Voice
       await ctx.api.sendChatAction(ctx.chat!.id, 'record_voice');

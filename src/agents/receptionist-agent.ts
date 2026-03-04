@@ -14,17 +14,22 @@ import { CEOAgent } from './ceo-agent';
 const SERVICES = {
   'yazılım geliştirme': {
     description: 'Web, mobil ve masaüstü uygulama geliştirme',
-    details: ['React, Vue, Angular frontend', 'Node.js, Python backend', 'iOS/Android mobil', 'Masaüstü uygulamaları'],
+    details: [
+      'React, Vue, Angular frontend',
+      'Node.js, Python backend',
+      'iOS/Android mobil',
+      'Masaüstü uygulamaları',
+    ],
   },
   'ai ml': {
     description: 'Yapay zeka ve makine öğrenmesi çözümleri',
     details: ['LLM entegrasyonları', 'Chatbot geliştirme', 'Sesli asistanlar', 'Otomasyon'],
   },
-  'otomasyon': {
+  otomasyon: {
     description: 'İş süreçleri otomasyonu',
     details: ['RPA çözümleri', 'Workflow otomasyonu', 'API entegrasyonları', 'Zapier/Make'],
   },
-  'danışmanlık': {
+  danışmanlık: {
     description: 'Teknoloji danışmanlığı',
     details: ['Dijital dönüşüm', 'Sistem mimarisi', 'Proje yönetimi', 'Ekip eğitimi'],
   },
@@ -41,7 +46,13 @@ export class ReceptionistAgent {
   /**
    * Randevu oluştur ve CEO'ya bildir
    */
-  async createAppointment(isim: string, telefon: string, tarih: string, saat: string, not?: string): Promise<string> {
+  async createAppointment(
+    isim: string,
+    telefon: string,
+    tarih: string,
+    saat: string,
+    not?: string
+  ): Promise<string> {
     try {
       safeLog('Creating appointment', { isim, telefon, tarih, saat });
 
@@ -98,8 +109,10 @@ export class ReceptionistAgent {
 
       // Bilinmeyen veya stratejik konu ise JALE'ye (Yönetici Asistanı) sor
       safeLog('Consulting Jale for expertise', { konu });
-      const jaleResponse = await this.ceoAgent.processRequest(`Jale Hanım, bir müşterimiz şu konuyu soruyor, ne cevap vermeliyim? Konu: ${konu}`);
-      
+      const jaleResponse = await this.ceoAgent.processRequest(
+        `Jale Hanım, bir müşterimiz şu konuyu soruyor, ne cevap vermeliyim? Konu: ${konu}`
+      );
+
       if (jaleResponse && jaleResponse.content) {
         return jaleResponse.content;
       }

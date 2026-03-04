@@ -31,8 +31,15 @@ async function ensureCollection(): Promise<void> {
   if (env.QDRANT_API_KEY) headers['api-key'] = env.QDRANT_API_KEY;
 
   try {
-    const checkResponse = await fetch(`${baseUrl}/collections/${collection}`, { method: 'GET', headers, signal: AbortSignal.timeout(5000) });
-    if (checkResponse.ok) { collectionEnsured = true; return; }
+    const checkResponse = await fetch(`${baseUrl}/collections/${collection}`, {
+      method: 'GET',
+      headers,
+      signal: AbortSignal.timeout(5000),
+    });
+    if (checkResponse.ok) {
+      collectionEnsured = true;
+      return;
+    }
     await fetch(`${baseUrl}/collections/${collection}`, {
       method: 'PUT',
       headers,
@@ -45,7 +52,11 @@ async function ensureCollection(): Promise<void> {
   }
 }
 
-export async function storeMemory(text: string, userId: string, source: string = 'user'): Promise<string> {
+export async function storeMemory(
+  text: string,
+  userId: string,
+  source: string = 'user'
+): Promise<string> {
   const env = getEnv();
   const id = uuidv4();
   const timestamp = new Date().toISOString();
@@ -86,10 +97,10 @@ export async function recallMemories(query: string, topK: number = 5): Promise<M
 
   if (env.VECTOR_DB_MOCK_MODE) {
     const results = memoryManager.search(query, topK);
-    return results.map(m => ({
+    return results.map((m) => ({
       id: m.id,
       text: m.text,
-      metadata: { source: m.source, timestamp: m.timestamp, userId: m.userId }
+      metadata: { source: m.source, timestamp: m.timestamp, userId: m.userId },
     }));
   }
 
@@ -97,25 +108,40 @@ export async function recallMemories(query: string, topK: number = 5): Promise<M
     // Qdrant araması... (mevcut mantık korunur)
     await ensureCollection();
     const embedding = await generateEmbedding(query);
-    const response = await fetch(`${env.QDRANT_URL}/collections/${env.QDRANT_COLLECTION}/points/search`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(env.QDRANT_API_KEY ? { 'api-key': env.QDRANT_API_KEY } : {}) },
-      body: JSON.stringify({ vector: embedding, limit: topK, with_payload: true, score_threshold: 0.5 }),
-    });
+    const response = await fetch(
+      `${env.QDRANT_URL}/collections/${env.QDRANT_COLLECTION}/points/search`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(env.QDRANT_API_KEY ? { 'api-key': env.QDRANT_API_KEY } : {}),
+        },
+        body: JSON.stringify({
+          vector: embedding,
+          limit: topK,
+          with_payload: true,
+          score_threshold: 0.5,
+        }),
+      }
+    );
     if (!response.ok) throw new Error('Qdrant search failed');
-    const data = await response.json() as any;
+    const data = (await response.json()) as any;
     return data.result.map((match: any) => ({
       id: String(match.id),
       text: match.payload.text,
-      metadata: { source: match.payload.source, timestamp: match.payload.timestamp, userId: match.payload.userId }
+      metadata: {
+        source: match.payload.source,
+        timestamp: match.payload.timestamp,
+        userId: match.payload.userId,
+      },
     }));
   } catch (error) {
     // Qdrant hata verirse JSON hafızadan getir
     const results = memoryManager.search(query, topK);
-    return results.map(m => ({
+    return results.map((m) => ({
       id: m.id,
       text: m.text,
-      metadata: { source: m.source, timestamp: m.timestamp, userId: m.userId }
+      metadata: { source: m.source, timestamp: m.timestamp, userId: m.userId },
     }));
   }
 }

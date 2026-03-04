@@ -12,8 +12,8 @@ export const weatherSkill: Skill = {
   execute: async (ctx: SkillContext): Promise<SkillResult> => {
     try {
       let city = ctx.userMessage.trim();
-      
-      // If the LLM passed a long sentence, try to extract city. 
+
+      // If the LLM passed a long sentence, try to extract city.
       // But if it's just "Istanbul", use it directly.
       if (city.split(' ').length > 2) {
         let query = city.toLowerCase();
@@ -28,7 +28,7 @@ export const weatherSkill: Skill = {
 
       // Normalize Turkish İ for OpenWeatherMap
       city = city.replace(/İ/g, 'I').replace(/ı/g, 'i');
-      
+
       safeLog('Weather Skill running', { city });
 
       // Note: OpenWeatherMap handles city names directly.

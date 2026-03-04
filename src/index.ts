@@ -171,16 +171,21 @@ async function main(): Promise<void> {
 
   // Start bot
   console.log('🚀 Agent Claw başlatılıyor...');
-  bot.start({
-    onStart: () => {
-      console.log(`✅ ${APP_NAME} aktif ve hazır!`);
-      console.log("📱 Telegram'da bot'a mesaj gönderebilirsiniz.");
-      console.log("📞 Vapi webhook'u dinleniyor.");
-    },
-  }).catch((err) => {
-    console.error('⚠️ Telegram bot başlatılamadı (Başka bir instance çalışıyor olabilir):', err.message);
-    console.log('🌐 Web UI (Express) çalışmaya devam ediyor...');
-  });
+  bot
+    .start({
+      onStart: () => {
+        console.log(`✅ ${APP_NAME} aktif ve hazır!`);
+        console.log("📱 Telegram'da bot'a mesaj gönderebilirsiniz.");
+        console.log("📞 Vapi webhook'u dinleniyor.");
+      },
+    })
+    .catch((err) => {
+      console.error(
+        '⚠️ Telegram bot başlatılamadı (Başka bir instance çalışıyor olabilir):',
+        err.message
+      );
+      console.log('🌐 Web UI (Express) çalışmaya devam ediyor...');
+    });
 }
 
 // Graceful shutdown

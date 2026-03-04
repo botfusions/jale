@@ -11,8 +11,8 @@ const mockBot = {
       console.log(`Message:\n${text}`);
       console.log('--------------------------');
       return { message_id: 123 } as any;
-    }
-  }
+    },
+  },
 } as unknown as Bot;
 
 async function testBriefing() {

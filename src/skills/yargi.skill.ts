@@ -45,7 +45,8 @@ export const yargiSkill: Skill = {
   name: 'yargi',
   displayName: 'Hukuk (Av. KEMAL)',
   emoji: '⚖️',
-  description: 'Türk hukuk mevzuatları ve mahkeme kararları konusunda uzmandır. Yargı veritabanlarında arama yapabilir.',
+  description:
+    'Türk hukuk mevzuatları ve mahkeme kararları konusunda uzmandır. Yargı veritabanlarında arama yapabilir.',
   triggers: ['hukuk', 'yargı', 'mahkeme', 'karar', 'yargıtay', 'danıştay', 'esas no', 'mevzuat'],
   enabled: true,
   execute: async (ctx: SkillContext): Promise<SkillResult> => {
@@ -88,12 +89,16 @@ Always summarize findings in Turkish. Professional and formal legal tone.
                 type: 'object',
                 properties: {
                   query: { type: 'string', description: 'Search term' },
-                  court: { type: 'string', enum: ['YARGITAYKARARI', 'DANISTAYKARAR', 'YERELHUKUK', 'ISTINAFHUKUK', 'KYB'], description: 'Optional court type' },
-                  page: { type: 'number', description: 'Page number' }
+                  court: {
+                    type: 'string',
+                    enum: ['YARGITAYKARARI', 'DANISTAYKARAR', 'YERELHUKUK', 'ISTINAFHUKUK', 'KYB'],
+                    description: 'Optional court type',
+                  },
+                  page: { type: 'number', description: 'Page number' },
                 },
-                required: ['query']
-              }
-            }
+                required: ['query'],
+              },
+            },
           },
           {
             type: 'function',
@@ -103,12 +108,15 @@ Always summarize findings in Turkish. Professional and formal legal tone.
               parameters: {
                 type: 'object',
                 properties: {
-                  documentId: { type: 'string', description: 'The document ID obtained from search' }
+                  documentId: {
+                    type: 'string',
+                    description: 'The document ID obtained from search',
+                  },
                 },
-                required: ['documentId']
-              }
-            }
-          }
+                required: ['documentId'],
+              },
+            },
+          },
         ],
         'anthropic/claude-sonnet-4.6'
       );
@@ -138,9 +146,8 @@ Always summarize findings in Turkish. Professional and formal legal tone.
           return {
             text: `⚖️ **Av. KEMAL (Hukuk Uzmanı) Yanıtı:**\n\n${finalSummary.content}`,
             voiceText: 'Hukuki sorgulama yaptım ve sonuçları özetledim.',
-            data: resultData
+            data: resultData,
           };
-
         } else if (call.function.name === 'yargi_get_doc') {
           // Güvenli: Argümanları dizi olarak geç
           const cmdArgs = [yargiCliPath, 'bedesten', 'doc', args.documentId];
@@ -160,7 +167,7 @@ Always summarize findings in Turkish. Professional and formal legal tone.
           return {
             text: `⚖️ **Av. KEMAL (Hukuk Uzmanı) Yanıtı:**\n\n${finalSummary.content}`,
             voiceText: 'Hukuki sorgulama yaptım ve sonuçları özetledim.',
-            data: resultData
+            data: resultData,
           };
         }
       }

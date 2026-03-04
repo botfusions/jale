@@ -33,12 +33,12 @@ Open Claw projesine Vapi telefon sesli asistanı entegrasyonu.
 
 ## Oluşturulan Dosyalar
 
-| Dosya | Açıklama |
-|-------|----------|
-| `src/webhook/vapi-webhook.ts` | Vapi webhook handler |
-| `src/webhook/index.ts` | Webhook module export |
-| `src/agents/receptionist-agent.ts` | Resepsiyon ajanı |
-| `src/index.ts` | Express server + webhook route |
+| Dosya                              | Açıklama                       |
+| ---------------------------------- | ------------------------------ |
+| `src/webhook/vapi-webhook.ts`      | Vapi webhook handler           |
+| `src/webhook/index.ts`             | Webhook module export          |
+| `src/agents/receptionist-agent.ts` | Resepsiyon ajanı               |
+| `src/index.ts`                     | Express server + webhook route |
 
 ---
 
@@ -61,10 +61,10 @@ VAPI_WEBHOOK_SECRET=your_webhook_secret_here
 
 ### 1. Assistant Bilgileri
 
-| Alan | Değer |
-|------|-------|
-| **Name** | Open Claw Resepsiyon |
-| **Model** | gpt-4o veya claude-sonnet-4 |
+| Alan      | Değer                           |
+| --------- | ------------------------------- |
+| **Name**  | Open Claw Resepsiyon            |
+| **Model** | gpt-4o veya claude-sonnet-4     |
 | **Voice** | ElevenLabs (Türkçe destekleyen) |
 
 ### 2. System Message
@@ -108,9 +108,9 @@ Randevu almak, hizmetlerimiz hakkında bilgi almak veya bir konuda destek isteme
 
 ### 4. Webhook URL
 
-| Ortam | URL |
-|-------|-----|
-| **Local (ngrok)** | `https://xxx.ngrok.io/webhook/vapi` |
+| Ortam                | URL                                    |
+| -------------------- | -------------------------------------- |
+| **Local (ngrok)**    | `https://xxx.ngrok.io/webhook/vapi`    |
 | **Production (VPS)** | `https://your-domain.com/webhook/vapi` |
 
 ---
@@ -206,6 +206,7 @@ Randevu almak, hizmetlerimiz hakkında bilgi almak veya bir konuda destek isteme
 ## Test Akışları
 
 ### Test 1: Randevu
+
 ```
 Kullanıcı: "Randevu almak istiyorum"
 Asistan: "Tabii, adınızı ve telefon numaranızı alabilir miyim?"
@@ -216,12 +217,14 @@ Asistan: [randevu_olustur çağırır] → "Randevunuz oluşturuldu!"
 ```
 
 ### Test 2: Bilgi
+
 ```
 Kullanıcı: "Ne iş yapıyorsunuz?"
 Asistan: "Open Claw olarak yazılım geliştirme, AI/ML çözümleri..."
 ```
 
 ### Test 3: Konu Dışı
+
 ```
 Kullanıcı: "Bugün hava nasıl?"
 Asistan: "Bu konuda yardımcı olamam. Sadece işimiz hakkında bilgi verebilirim."
@@ -232,6 +235,7 @@ Asistan: "Bu konuda yardımcı olamam. Sadece işimiz hakkında bilgi verebiliri
 ## Deploy
 
 ### Local Test
+
 ```bash
 # Server'ı başlat
 npm run dev
@@ -244,6 +248,7 @@ ngrok http 3000
 ```
 
 ### Production (VPS + Coolify)
+
 ```bash
 # GitHub'a push
 git add .
@@ -296,12 +301,12 @@ Vapi Arama → Webhook → Resepsiyon Agent → Vector DB (Qdrant)
 
 ## Sorun Giderme
 
-| Sorun | Çözüm |
-|-------|-------|
-| Webhook 404 | Route doğru mu? `/webhook/vapi` |
-| Function çalışmıyor | Fonksiyon isimleri match mi? |
-| Ses yok | ElevenLabs API key doğru mu? |
-| Kayıt yok | Qdrant bağlantısı var mı? |
+| Sorun               | Çözüm                           |
+| ------------------- | ------------------------------- |
+| Webhook 404         | Route doğru mu? `/webhook/vapi` |
+| Function çalışmıyor | Fonksiyon isimleri match mi?    |
+| Ses yok             | ElevenLabs API key doğru mu?    |
+| Kayıt yok           | Qdrant bağlantısı var mı?       |
 
 ---
 

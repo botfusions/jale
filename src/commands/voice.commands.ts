@@ -5,13 +5,14 @@
 import { Bot } from 'grammy';
 import fs from 'fs';
 import { safeError } from '../utils/logger';
+import { safeReply } from '../utils/telegram.helpers';
 
 export function registerVoiceCommands(bot: Bot): void {
   // Direct voice command: /voice <text>
   bot.command('voice', async (ctx) => {
     const text = ctx.message?.text?.replace(/^\/voice\s*/i, '').trim();
     if (!text) {
-      await ctx.reply('⚠️ Kullanım: `/voice Merhaba dünya`', { parse_mode: 'Markdown' });
+      await safeReply(ctx, '⚠️ Kullanım: `/voice Merhaba dünya`');
       return;
     }
     try {

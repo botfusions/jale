@@ -39,7 +39,9 @@ export function startHeartbeat(bot: Bot): void {
         // 1. Fetch Market Summary (KAYA)
         let marketSummary = 'Piyasa bilgisi şu an alınamadı.';
         try {
-          const kayaRes = await borsaciAgent.analyzeMarket('Piyasa özeti geç ve günün öne çıkan finansal haberlerini listele.');
+          const kayaRes = await borsaciAgent.analyzeMarket(
+            'Piyasa özeti geç ve günün öne çıkan finansal haberlerini listele.'
+          );
           marketSummary = kayaRes.content;
         } catch (err) {
           safeLog('Heartbeat: KAYA summary failed');
@@ -111,7 +113,9 @@ export async function sendHeartbeatNow(bot: Bot): Promise<void> {
   // 1. Fetch Market Summary (KAYA)
   let marketSummary = 'Piyasa bilgisi şu an alınamadı.';
   try {
-    const kayaRes = await borsaciAgent.analyzeMarket('Piyasa özeti geç ve günün öne çıkan finansal haberlerini listele.');
+    const kayaRes = await borsaciAgent.analyzeMarket(
+      'Piyasa özeti geç ve günün öne çıkan finansal haberlerini listele.'
+    );
     marketSummary = kayaRes.content;
   } catch (err) {
     safeLog('Manual Heartbeat: KAYA summary failed');

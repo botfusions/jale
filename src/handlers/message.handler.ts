@@ -7,6 +7,7 @@ import { storeMemory, recallMemories } from '../memory/vector.service';
 import { loadCoreMemory, appendMemoryLog } from '../memory/core.memory';
 import { getHistory, addToHistory, getHistoryForLLM } from '../memory/conversation-store';
 import { downloadFile } from '../telegram/bot';
+import { safeReply } from '../utils/telegram.helpers';
 import { getEnv } from '../config/env';
 import { safeLog, safeError } from '../utils/logger';
 import { metrics } from '../utils/metrics';
@@ -34,11 +35,11 @@ import fs from 'fs';
 // ==========================================
 
 export async function handleStart(ctx: Context): Promise<void> {
-  await ctx.reply(MESSAGES.WELCOME, { parse_mode: 'Markdown' });
+  await safeReply(ctx, MESSAGES.WELCOME);
 }
 
 export async function handleHelp(ctx: Context): Promise<void> {
-  await ctx.reply(MESSAGES.HELP, { parse_mode: 'Markdown' });
+  await safeReply(ctx, MESSAGES.HELP);
 }
 
 export async function handleStatus(ctx: Context): Promise<void> {
@@ -143,7 +144,7 @@ export async function handleJaleCommand(ctx: Context): Promise<void> {
     metrics.recordApiCall(Date.now() - startTime);
     addToHistory(userId, 'user', text);
     addToHistory(userId, 'assistant', response.content);
-    await ctx.reply(`👸 **JALE (CEO):**\n\n${response.content}`, { parse_mode: 'Markdown' });
+    await safeReply(ctx, `👸 **JALE (CEO):**\n\n${response.content}`);
   } catch (error) {
     metrics.recordError();
     safeError('Jale command failed', error);
@@ -171,7 +172,7 @@ export async function handleOsmanCommand(ctx: Context): Promise<void> {
     metrics.recordApiCall(Date.now() - startTime);
     addToHistory(userId, 'user', text);
     addToHistory(userId, 'assistant', response.content);
-    await ctx.reply(`👷 **OSMAN (COO):**\n\n${response.content}`, { parse_mode: 'Markdown' });
+    await safeReply(ctx, `👷 **OSMAN (COO):**\n\n${response.content}`);
   } catch (error) {
     metrics.recordError();
     safeError('Osman command failed', error);
@@ -206,7 +207,7 @@ export async function handleResearchCommand(ctx: Context): Promise<void> {
     addToHistory(userId, 'user', text);
     addToHistory(userId, 'assistant', result.text);
 
-    await ctx.reply(result.text, { parse_mode: 'Markdown' });
+    await safeReply(ctx, result.text);
   } catch (error) {
     metrics.recordError();
     safeError('Research command failed', error);
@@ -237,8 +238,8 @@ export async function handleTextMessage(ctx: Context): Promise<void> {
 
     await ctx.reply(
       `⚠️ **Rate Limit Aşıldı!**\n\n` +
-      `Çok hızlı istek gönderiyorsunuz. Lütfen ${waitMinutes} dakika bekleyin.\n\n` +
-      `⏱️ _Kalan süre: ${waitSeconds} saniye_`,
+        `Çok hızlı istek gönderiyorsunuz. Lütfen ${waitMinutes} dakika bekleyin.\n\n` +
+        `⏱️ _Kalan süre: ${waitSeconds} saniye_`,
       { parse_mode: 'Markdown' }
     );
     return;
@@ -370,7 +371,7 @@ export async function handleTextMessage(ctx: Context): Promise<void> {
     if (wantsVoice) {
       try {
         // Send text first
-        await ctx.reply(response.content, { parse_mode: 'Markdown' });
+        await safeReply(ctx, response.content);
 
         // Then voice
         await ctx.api.sendChatAction(ctx.chat!.id, 'record_voice');
@@ -387,7 +388,7 @@ export async function handleTextMessage(ctx: Context): Promise<void> {
         safeError('TTS failed, text reply already sent', ttsError);
       }
     } else {
-      await ctx.reply(response.content, { parse_mode: 'Markdown' });
+      await safeReply(ctx, response.content);
     }
 
     // Auto-store important messages
@@ -423,8 +424,8 @@ export async function handleVoiceMessage(ctx: Context, bot: Bot): Promise<void> 
 
     await ctx.reply(
       `⚠️ **Rate Limit Aşıldı!**\n\n` +
-      `Çok hızlı ses gönderiyorsunuz. Lütfen ${waitMinutes} dakika bekleyin.\n\n` +
-      `⏱️ _Kalan süre: ${waitSeconds} saniye_`,
+        `Çok hızlı ses gönderiyorsunuz. Lütfen ${waitMinutes} dakika bekleyin.\n\n` +
+        `⏱️ _Kalan süre: ${waitSeconds} saniye_`,
       { parse_mode: 'Markdown' }
     );
     return;
@@ -481,7 +482,7 @@ export async function handleVoiceMessage(ctx: Context, bot: Bot): Promise<void> 
 
     // Voice messages always get a voice reply back
     // Send text reply first
-    await ctx.reply(response.content, { parse_mode: 'Markdown' });
+    await safeReply(ctx, response.content);
 
     // Then send voice
     try {

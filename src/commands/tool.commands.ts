@@ -7,8 +7,9 @@ import fs from 'fs';
 import path from 'path';
 import { safeLog, safeError } from '../utils/logger';
 import { COMMANDS } from '../config/constants';
-import { runDiagnostics, formatDiagnostics } from '../doctor/doctor';
+import { formatDiagnostics, runDiagnostics } from '../doctor/doctor';
 import { sendHeartbeatNow } from '../scheduler/heartbeat';
+import { safeReply } from '../utils/telegram.helpers';
 // import { adminOnly } from '../telegram/auth'; // Removed
 
 export function registerToolCommands(bot: Bot): void {
@@ -16,7 +17,7 @@ export function registerToolCommands(bot: Bot): void {
   bot.command('ozet', async (ctx) => {
     const url = ctx.message?.text?.replace(/^\/ozet\s*/i, '').trim();
     if (!url) {
-      await ctx.reply('⚠️ Kullanım: `/ozet https://example.com`', { parse_mode: 'Markdown' });
+      await safeReply(ctx, '⚠️ Kullanım: `/ozet https://example.com`');
       return;
     }
     try {
@@ -71,9 +72,7 @@ export function registerToolCommands(bot: Bot): void {
         for (const chunk of chunks) {
           await ctx.reply(chunk);
         }
-        await ctx.reply(`📁 Özet kaydedildi: \`summaries/${fileName}\` ve hafızaya alındı.`, {
-          parse_mode: 'Markdown',
-        });
+        await safeReply(ctx, `📁 Özet kaydedildi: \`summaries/${fileName}\` ve hafızaya alındı.`);
       } else {
         await ctx.reply('⚠️ Sayfa özetlenemedi — içerik bulunamadı.');
       }
@@ -90,7 +89,7 @@ export function registerToolCommands(bot: Bot): void {
       await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
       const diagnostics = await runDiagnostics();
       const report = formatDiagnostics(diagnostics);
-      await ctx.reply(report, { parse_mode: 'Markdown' });
+      await safeReply(ctx, report);
     } catch (error: any) {
       safeError('Doctor failed', error);
       await ctx.reply('❌ Doktor sistemi çalışırken bir hata oluştu.');
