@@ -9,6 +9,7 @@ import { safeLog, safeError } from '../utils/logger';
 import { COMMANDS } from '../config/constants';
 import { runDiagnostics, formatDiagnostics } from '../doctor/doctor';
 import { sendHeartbeatNow } from '../scheduler/heartbeat';
+// import { adminOnly } from '../telegram/auth'; // Removed
 
 export function registerToolCommands(bot: Bot): void {
   // Summarize command: /ozet <url>

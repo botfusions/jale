@@ -6,6 +6,7 @@ import { Bot } from 'grammy';
 import fs from 'fs';
 import { getUnreadEmails, formatEmailSummary } from '../mcp/gmail';
 import { safeError } from '../utils/logger';
+// import { adminOnly } from '../telegram/auth'; // Removed
 
 export function registerMailCommands(bot: Bot): void {
   // Gmail command (via gogcli — READ-ONLY)

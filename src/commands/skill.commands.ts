@@ -4,6 +4,7 @@
 
 import { Bot } from 'grammy';
 import { skillManager } from '../skills';
+// import { adminOnly } from '../telegram/auth'; // Removed
 
 export function registerSkillCommands(bot: Bot): void {
   bot.command('skills', async (ctx) => {

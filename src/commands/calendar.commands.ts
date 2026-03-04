@@ -11,6 +11,7 @@ import {
   formatCalendarSummary,
 } from '../mcp/calendar';
 import { safeError } from '../utils/logger';
+// import { adminOnly } from '../telegram/auth'; // Removed
 
 export function registerCalendarCommands(bot: Bot): void {
   bot.command('calendar', async (ctx) => {

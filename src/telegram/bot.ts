@@ -10,9 +10,10 @@ export function createBot(): Bot {
   // Allowlist middleware — must be first
   bot.use(async (ctx: Context, next: () => Promise<void>) => {
     const userId = ctx.from?.id?.toString();
-    const allowedIds = env.TELEGRAM_ALLOWLIST_USER_ID.split(',').map((id) => id.trim());
+    const env = getEnv();
+    const allowedUserIds = env.TELEGRAM_ALLOWLIST_USER_ID?.split(',') || [];
 
-    if (!userId || !allowedIds.includes(userId)) {
+    if (!userId || !allowedUserIds.includes(userId)) {
       safeLog('Unauthorized access attempt', {
         userId: userId || 'unknown',
       });

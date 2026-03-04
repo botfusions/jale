@@ -14,6 +14,7 @@ import { CEOAgent } from '../agents/ceo-agent';
 import { COOAgent } from '../agents/coo-agent';
 import { researcherSkill } from '../skills/researcher.skill';
 import { rateLimiter } from '../security/rate-limiter';
+// import { isAdmin } from '../telegram/auth'; // Removed
 
 const ceoAgent = new CEOAgent();
 const cooAgent = new COOAgent();

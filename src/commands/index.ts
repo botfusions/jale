@@ -11,6 +11,7 @@ import { registerMailCommands } from './mail.commands';
 import { registerVoiceCommands } from './voice.commands';
 import { registerToolCommands } from './tool.commands';
 import { registerSkillCommands } from './skill.commands';
+// No admin commands needed anymore
 import { safeLog } from '../utils/logger';
 
 export function registerAllCommands(bot: Bot): void {
@@ -19,6 +20,7 @@ export function registerAllCommands(bot: Bot): void {
   registerVoiceCommands(bot);
   registerToolCommands(bot);
   registerSkillCommands(bot);
+  // registerAdminCommands(bot); // Removed
 
   safeLog('All commands registered');
 }

@@ -9,6 +9,7 @@ const envSchema = z.object({
   // Telegram
   TELEGRAM_BOT_TOKEN: z.string().min(1, 'TELEGRAM_BOT_TOKEN is required'),
   TELEGRAM_ALLOWLIST_USER_ID: z.string().min(1, 'TELEGRAM_ALLOWLIST_USER_ID is required'),
+  TELEGRAM_ADMIN_USER_ID: z.string().min(1, 'TELEGRAM_ADMIN_USER_ID is required'),
 
   // LLM (OpenRouter)
   MODEL_API_KEY: z.string().min(1, 'MODEL_API_KEY is required'),

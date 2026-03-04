@@ -31,7 +31,7 @@ const SERVICES = {
 };
 
 export class ReceptionistAgent {
-  private name: string = 'RESEPSİYON';
+  private name: string = 'AYÇA_RESEPSİYON';
   private ceoAgent: CEOAgent;
 
   constructor() {
@@ -50,7 +50,7 @@ export class ReceptionistAgent {
       appendMemoryLog(`[RANDEVU] ${isim} | ${telefon} | ${tarih} ${saat}`);
 
       // JALE'yi bilgilendir (Ajanlar arası raporlama)
-      const report = `Sayın CEO Jale, az önce bir randevu talebi aldım. Müşteri: ${isim}, Tarih: ${tarih} ${saat}. Onayınız ve stratejik yorumunuz nedir?`;
+      const report = `Jale Hanım, yeni bir randevu talebi aldım. Müşteri: ${isim}, Tarih: ${tarih} ${saat}. Bilgilerinize sunarım.`;
       await this.ceoAgent.processRequest(report);
 
       return `Randevunuz başarıyla oluşturuldu! Sayın ${isim}, ${tarih} tarihinde saat ${saat}'te sizi bekliyoruz. Jale hanım da konuyla bizzat ilgileniyor.`;
@@ -72,7 +72,7 @@ export class ReceptionistAgent {
       appendMemoryLog(`[MÜŞTERİ] ${isim} | ${telefon}`);
 
       // JALE'yi bilgilendir
-      const report = `Jale Hanım, yeni bir müşteri kaydı aldım: ${isim} (${telefon}). Talebi: ${not}. Bu müşteriyle ilgili stratejimiz nedir?`;
+      const report = `Jale Hanım, beni arayan bir müşterimizin kaydını aldım: ${isim} (${telefon}). Talebi: ${not}. Bilgilerinize sunarım.`;
       await this.ceoAgent.processRequest(report);
 
       return `Bilgileriniz kaydedildi ${isim} bey/hanım. En kısa sürede size dönüş yapılacaktır. Telefon numaranız: ${telefon}`;
@@ -96,9 +96,9 @@ export class ReceptionistAgent {
         }
       }
 
-      // Bilinmeyen veya stratejik konu ise JALE'ye (CEO) sor
-      safeLog('Consulting Jale (CEO) for expertise', { konu });
-      const jaleResponse = await this.ceoAgent.processRequest(konu);
+      // Bilinmeyen veya stratejik konu ise JALE'ye (Yönetici Asistanı) sor
+      safeLog('Consulting Jale for expertise', { konu });
+      const jaleResponse = await this.ceoAgent.processRequest(`Jale Hanım, bir müşterimiz şu konuyu soruyor, ne cevap vermeliyim? Konu: ${konu}`);
       
       if (jaleResponse && jaleResponse.content) {
         return jaleResponse.content;

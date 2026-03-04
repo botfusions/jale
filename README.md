@@ -25,28 +25,29 @@
 
 ## 🌟 Özellikler
 
-| Özellik               | Durum    | Açıklama                                     |
-| --------------------- | -------- | -------------------------------------------- |
-| 💬 Metin Sohbet       | ✅ Aktif | OpenRouter üzerinden LLM ile sohbet          |
-| 🎤 Sesli Mesaj        | ✅ Aktif | Ses → metin çevirisi + yanıt                 |
-| 🔊 Sesli Yanıt (TTS)  | ✅ Aktif | "reply with voice" ile sesli cevap           |
-| 🧠 Uzun Süreli Hafıza | ✅ Aktif | Qdrant vektör DB ile hatırlama/çağırma       |
-| 💾 Sohbet Geçmişi     | ✅ Aktif | JSON persist — restart sonrası devam eder    |
-| 🔄 Retry Mekanizması  | ✅ Aktif | Exponential backoff, 429/5xx korumalı        |
-| 💓 Günlük Heartbeat   | ✅ Aktif | Her gün 08:00'de check-in mesajı             |
-| 📅 Takvim Özeti       | ✅ Aktif | Google Calendar salt okunur entegrasyon      |
-| 📧 E-posta Özeti      | ✅ Aktif | Gmail okunmamış maillar + sesli okuma        |
-| 🔐 Güvenlik           | ✅ Aktif | Allowlist, secret masking, log redaksiyon    |
-| 🚀 Deployment         | ✅ Hazır | Docker + docker-compose + Railway config     |
-| 🌐 Web Arama          | ✅ Aktif | İnternetten bilgi arama ve özetleme          |
-| ⛅ Hava Durumu        | ✅ Aktif | Güncel hava durumu bilgisi (Open-Meteo)      |
-| 🌍 Çeviri             | ✅ Aktif | Metinleri anında ilgili dile çevirme         |
-| 📰 Günlük Brifing     | ✅ Aktif | 🆕 Sabah raporu (KAYA, Hava durumu)          |
-| 📈 Borsacı Agent      | ✅ Aktif | 🆕 KAYA (Finans, Borsa, Kripto Analizi)      |
-| 💻 Yazılım Uzmanı     | ✅ Aktif | 🆕 RECEP (Kod Yazma, CLI, Debugging)         |
-| ⚖️ Hukuk Uzmanı       | ✅ Aktif | 🆕 Av. KEMAL (Yargı Mevzuat, Karar Arama)    |
-| 🤝 Multi-Agent Swarm  | ✅ Aktif | JALE (CEO) liderliğinde alt ajan delegasyonu |
-| 🛠️ Tool Calling       | ✅ Aktif | LLM'in otonom yetenek (skill) çağırması      |
+| Özellik               | Durum    | Açıklama                                          |
+| --------------------- | -------- | ------------------------------------------------- |
+| 💬 Metin Sohbet       | ✅ Aktif | OpenRouter üzerinden LLM ile sohbet               |
+| 🎤 Sesli Mesaj        | ✅ Aktif | Ses → metin çevirisi + yanıt                      |
+| 🔊 Sesli Yanıt (TTS)  | ✅ Aktif | "reply with voice" ile sesli cevap                |
+| 🧠 Uzun Süreli Hafıza | ✅ Aktif | Qdrant vektör DB ile hatırlama/çağırma            |
+| 💾 Sohbet Geçmişi     | ✅ Aktif | JSON persist — restart sonrası devam eder         |
+| 🔄 Retry Mekanizması  | ✅ Aktif | Exponential backoff, 429/5xx korumalı             |
+| 💓 Günlük Heartbeat   | ✅ Aktif | Her gün 08:00'de check-in mesajı                  |
+| 📅 Takvim Özeti       | ✅ Aktif | Google Calendar salt okunur entegrasyon           |
+| 📧 E-posta Özeti      | ✅ Aktif | Gmail okunmamış maillar + sesli okuma             |
+| 🔐 Güvenlik           | ✅ Aktif | Allowlist, secret masking, log redaksiyon         |
+| 🚀 Deployment         | ✅ Hazır | Docker + docker-compose + Railway config          |
+| 🌐 Web Arama          | ✅ Aktif | İnternetten bilgi arama ve özetleme               |
+| ⛅ Hava Durumu        | ✅ Aktif | Güncel hava durumu bilgisi (Open-Meteo)           |
+| 🌍 Çeviri             | ✅ Aktif | Metinleri anında ilgili dile çevirme              |
+| 📰 Günlük Brifing     | ✅ Aktif | 🆕 Sabah raporu (KAYA, Hava durumu)               |
+| 📈 Borsacı Agent      | ✅ Aktif | 🆕 KAYA (Finans, Borsa, Kripto Analizi)           |
+| 💻 Yazılım Uzmanı     | ✅ Aktif | 🆕 RECEP (Kod Yazma, CLI, Debugging)              |
+| ⚖️ Hukuk Uzmanı       | ✅ Aktif | 🆕 Av. KEMAL (Yargı Mevzuat, Karar Arama)         |
+| 🤝 Multi-Agent Swarm  | ✅ Aktif | JALE (Yönetici) liderliğinde alt ajan delegasyonu |
+| 📞 AI Resepsiyon      | ✅ Aktif | 🆕 AYÇA (Vapi Sesli Telefon Asistanı)             |
+| 🛠️ Tool Calling       | ✅ Aktif | LLM'in otonom yetenek (skill) çağırması           |
 
 ---
 
@@ -57,7 +58,8 @@ agent-claw/
 ├── src/
 │   ├── index.ts                 # Ana giriş noktası (modüler)
 │   ├── agents/                  # 🆕 Ajan (Swarm) Modülleri
-│   │   ├── ceo-agent.ts         # JALE (CEO) - Strateji ve Otonom Yönetim
+│   │   ├── ceo-agent.ts         # JALE (Yönetici) - Strateji ve Otonom Yönetim
+│   │   ├── receptionist-agent.ts# AYÇA (Resepsiyon) - Vapi Telefon Karşılama
 │   │   ├── coo-agent.ts         # OSMAN (COO) - İş Akışı Planlama
 │   │   └── borsaci-agent.ts     # 🆕 KAYA (Borsacı) - Finansal Analiz
 │   ├── commands/                # 🆕 Komut modüleri
@@ -339,6 +341,16 @@ Her gün saat **10:00**'da (configüre edilebilir) size dinamik bir rapor sunar:
 ```
 /heartbeat_test
 ```
+
+---
+
+## 📞 AI Resepsiyon (Vapi)
+
+Sistemde telefon aramalarını karşılayan **Ayça** isimli Vapi destekli bir resepsiyonist bot bulunmaktadır.
+
+- **Görevi:** Gelen çağrıları Türkçe yanıtlamak, firma hizmetlerini açıklamak, randevu oluşturmak ve geri dönüş taleplerini kaydetmek.
+- **Raporlama Yolu:** Ayça, çağrı bittiğinde veya önemli bir talep aldığında bunu doğrudan **Yönetici Asistanı Jale**'ye raporlar.
+- **Entegrasyon:** `vapi_config.json`, `src/agents/receptionist-agent.ts` ve webhook endpoint'i üzerinden çalışır.
 
 ---
 
