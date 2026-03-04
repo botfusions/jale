@@ -43,7 +43,7 @@ async function spawnCommand(command: string, args: string[]): Promise<any> {
 
 export const yargiSkill: Skill = {
   name: 'yargi',
-  displayName: 'Avukat (Yargı)',
+  displayName: 'Avukat KEMAL (Yargı)',
   emoji: '⚖️',
   description:
     'Türk hukuk mevzuatları ve mahkeme kararları konusunda uzmandır. Yargı veritabanlarında arama yapabilir.',
@@ -58,7 +58,7 @@ export const yargiSkill: Skill = {
       const nodePath = 'node'; // Assume node is in path
 
       const systemPrompt = `
-You are AVUKAT, the Legal Specialist of the Agent Swarm.
+You are AVUKAT KEMAL, the Legal Specialist of the Agent Swarm.
 Your expertise:
 - Turkish Law, Court Decisions, and Regulations.
 - Searching Bedesten (Adalet Bakanlığı) databases.
@@ -84,7 +84,7 @@ Always summarize findings in Turkish. Professional and formal legal tone.
       const response = await chat(
         ctx.userMessage,
         [],
-        `Role: Legal Specialist (AVUKAT)\n${systemPrompt}`,
+        `Role: Legal Specialist (AVUKAT KEMAL)\n${systemPrompt}`,
         [
           {
             type: 'function',
@@ -144,13 +144,13 @@ Always summarize findings in Turkish. Professional and formal legal tone.
           const finalSummary = await chat(
             `CLI result: ${JSON.stringify(resultData)}\n\nUser Question: ${ctx.userMessage}`,
             [],
-            `Role: Legal Specialist (AVUKAT)\nYou are summarizing the search results from the legal database for the user.`,
+            `Role: Legal Specialist (AVUKAT KEMAL)\nYou are summarizing the search results from the legal database for the user.`,
             [],
             'anthropic/claude-sonnet-4.6'
           );
 
           return {
-            text: `⚖️ **AVUKAT (Hukuk Uzmanı) Yanıtı:**\n\n${finalSummary.content}`,
+            text: `⚖️ **AVUKAT KEMAL (Hukuk Uzmanı) Yanıtı:**\n\n${finalSummary.content}`,
             voiceText: 'Hukuki sorgulama yaptım ve sonuçları özetledim.',
             data: resultData,
           };
@@ -165,13 +165,13 @@ Always summarize findings in Turkish. Professional and formal legal tone.
           const finalSummary = await chat(
             `CLI result: ${JSON.stringify(resultData)}\n\nUser Question: ${ctx.userMessage}`,
             [],
-            `Role: Legal Specialist (AVUKAT)\nYou are summarizing the search results from the legal database for the user.`,
+            `Role: Legal Specialist (AVUKAT KEMAL)\nYou are summarizing the search results from the legal database for the user.`,
             [],
             'anthropic/claude-sonnet-4.6'
           );
 
           return {
-            text: `⚖️ **AVUKAT (Hukuk Uzmanı) Yanıtı:**\n\n${finalSummary.content}`,
+            text: `⚖️ **AVUKAT KEMAL (Hukuk Uzmanı) Yanıtı:**\n\n${finalSummary.content}`,
             voiceText: 'Hukuki sorgulama yaptım ve sonuçları özetledim.',
             data: resultData,
           };
@@ -179,7 +179,7 @@ Always summarize findings in Turkish. Professional and formal legal tone.
       }
 
       return {
-        text: `⚖️ **AVUKAT (Hukuk Uzmanı) Yanıtı:**\n\n${response.content}`,
+        text: `⚖️ **AVUKAT KEMAL (Hukuk Uzmanı) Yanıtı:**\n\n${response.content}`,
         voiceText: 'İsteğini inceledim, raporu hazırladım.',
       };
     } catch (error: any) {

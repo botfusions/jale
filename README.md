@@ -44,7 +44,7 @@
 | 📰 Günlük Brifing     | ✅ Aktif | 🆕 Sabah raporu (KAYA, Hava durumu)               |
 | 📈 Borsacı Agent      | ✅ Aktif | 🆕 KAYA (Finans, Borsa, Kripto Analizi)           |
 | 💻 Yazılım Uzmanı     | ✅ Aktif | 🆕 RECEP (Kod Yazma, CLI, Debugging)              |
-| ⚖️ Hukuk Uzmanı       | ✅ Aktif | 🆕 AVUKAT (Yargı Mevzuat, Karar Arama, Kılavuz)   |
+| ⚖️ Hukuk Uzmanı       | ✅ Aktif | 🆕 AVUKAT KEMAL (Yargı Mevzuat, Karar Arama)      |
 | 🤝 Multi-Agent Swarm  | ✅ Aktif | JALE (Yönetici) liderliğinde alt ajan delegasyonu |
 | 📞 AI Resepsiyon      | ✅ Aktif | 🆕 AYÇA (Vapi Sesli Telefon Asistanı)             |
 | 🛠️ Tool Calling       | ✅ Aktif | LLM'in otonom yetenek (skill) çağırması           |
@@ -227,7 +227,7 @@ npm start
 | `/jale <mesaj>`     | CEO Jale'den otonom stratejik yönetim isteği      |
 | `/osman <mesaj>`    | COO Osman'dan projelendirme ve iş planı isteği    |
 | `/recep <mesaj>`    | Yazılım uzmanı RECEP'ten kodlama/teknik istek     |
-| `/yargi <sorgu>`    | AVUKAT ile hukuki veritabanı sorgulaması          |
+| `/yargi <sorgu>`    | AVUKAT KEMAL ile hukuki veritabanı sorgulaması    |
 | `/research <sorgu>` | Araştırmacı ajanla derinlemesine LLM araştırması  |
 
 ---
