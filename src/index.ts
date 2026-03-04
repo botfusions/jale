@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import path from 'path';
 import { createBot } from './telegram/bot';
 import {
   handleStart,
@@ -15,12 +16,18 @@ import {
 import { handleVapiWebhook } from './webhook/vapi-webhook';
 import { startHeartbeat } from './scheduler/heartbeat';
 import { getEnv, maskSecret } from './config/env';
-import { safeLog } from './utils/logger';
+import { safeLog, safeError } from './utils/logger';
 import { APP_NAME, APP_VERSION, APP_EMOJI, COMMANDS } from './config/constants';
 import { cleanupAllTempFiles } from './tts/tts.service';
 import { registerAllSkills } from './skills';
 import { registerAllCommands } from './commands';
-import { loadConversations, flushConversations } from './memory/conversation-store';
+import {
+  loadConversations,
+  flushConversations,
+  getHistoryForLLM,
+  addToHistory,
+} from './memory/conversation-store';
+import { CEOAgent } from './agents/ceo-agent';
 
 const HTTP_PORT = process.env.HTTP_PORT || 3000;
 
@@ -63,10 +70,13 @@ async function main(): Promise<void> {
   loadConversations();
 
   // ==========================================
-  // HTTP Server (Express) - Vapi Webhook
+  // HTTP Server (Express) - Vapi & Web UI
   // ==========================================
   const app = express();
   app.use(express.json());
+
+  // Serve Web UI
+  app.use(express.static(path.join(__dirname, '../public')));
 
   // Health check endpoint
   app.get('/health', (_req: Request, res: Response) => {
@@ -80,6 +90,30 @@ async function main(): Promise<void> {
 
   // Vapi webhook endpoint
   app.post('/webhook/vapi', handleVapiWebhook);
+
+  // Web UI Chat endpoint
+  app.post('/api/chat', async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { message, sessionId } = req.body;
+      if (!message || !sessionId) {
+        res.status(400).json({ error: 'Message and sessionId are required' });
+        return;
+      }
+
+      const history = getHistoryForLLM(sessionId);
+
+      const ceo = new CEOAgent();
+      const response = await ceo.processRequest(message, history);
+
+      addToHistory(sessionId, 'user', message);
+      addToHistory(sessionId, 'assistant', response.content);
+
+      res.json({ reply: response.content });
+    } catch (error: any) {
+      safeError('Error in Web UI chat', error);
+      res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+  });
 
   // Start HTTP server
   app.listen(HTTP_PORT, () => {
@@ -137,12 +171,15 @@ async function main(): Promise<void> {
 
   // Start bot
   console.log('🚀 Agent Claw başlatılıyor...');
-  await bot.start({
+  bot.start({
     onStart: () => {
       console.log(`✅ ${APP_NAME} aktif ve hazır!`);
       console.log("📱 Telegram'da bot'a mesaj gönderebilirsiniz.");
       console.log("📞 Vapi webhook'u dinleniyor.");
     },
+  }).catch((err) => {
+    console.error('⚠️ Telegram bot başlatılamadı (Başka bir instance çalışıyor olabilir):', err.message);
+    console.log('🌐 Web UI (Express) çalışmaya devam ediyor...');
   });
 }
 
