@@ -2,7 +2,7 @@ import { Skill, SkillContext, SkillResult } from './skill-manager';
 import { safeLog, safeError } from '../utils/logger';
 import { chat } from '../llm/openrouter';
 import { spawnCommand } from '../utils/shell';
-import { TurndownService } from 'turndown';
+import TurndownService from 'turndown';
 import path from 'path';
 
 // yargi-cli interaction helpers removed (moved to shared shell utility)
