@@ -1,45 +1,11 @@
 import { Skill, SkillContext, SkillResult } from './skill-manager';
 import { safeLog, safeError } from '../utils/logger';
 import { chat } from '../llm/openrouter';
-import { spawn } from 'child_process';
+import { spawnCommand } from '../utils/shell';
+import { TurndownService } from 'turndown';
 import path from 'path';
 
-// Helper fonksiyon: Güvenli komut çalıştırma
-async function spawnCommand(command: string, args: string[]): Promise<any> {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
-      cwd: process.cwd(),
-      shell: false, // Güvenlik: shell'i kullanma
-    });
-
-    let stdout = '';
-    let stderr = '';
-
-    child.stdout?.on('data', (data: Buffer) => {
-      stdout += data.toString();
-    });
-
-    child.stderr?.on('data', (data: Buffer) => {
-      stderr += data.toString();
-    });
-
-    child.on('error', (error) => {
-      reject(new Error(`Command execution failed: ${error.message}`));
-    });
-
-    child.on('close', (code: number | null) => {
-      if (code !== 0) {
-        reject(new Error(`Command failed with code ${code}: ${stderr}`));
-      } else {
-        try {
-          resolve(JSON.parse(stdout));
-        } catch (e) {
-          resolve(stdout);
-        }
-      }
-    });
-  });
-}
+// yargi-cli interaction helpers removed (moved to shared shell utility)
 
 export const yargiSkill: Skill = {
   name: 'yargi',
