@@ -7,9 +7,9 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const envSchema = z.object({
   // Telegram
-  TELEGRAM_BOT_TOKEN: z.string().min(1, 'TELEGRAM_BOT_TOKEN is required'),
-  TELEGRAM_ALLOWLIST_USER_ID: z.string().min(1, 'TELEGRAM_ALLOWLIST_USER_ID is required'),
-  TELEGRAM_ADMIN_USER_ID: z.string().min(1, 'TELEGRAM_ADMIN_USER_ID is required'),
+  TELEGRAM_BOT_TOKEN: z.string().optional().default(''),
+  TELEGRAM_ALLOWLIST_USER_ID: z.string().optional().default(''),
+  TELEGRAM_ADMIN_USER_ID: z.string().optional().default(''),
 
   // LLM (OpenRouter)
   MODEL_API_KEY: z.string().min(1, 'MODEL_API_KEY is required'),
