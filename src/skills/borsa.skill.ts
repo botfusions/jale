@@ -7,7 +7,7 @@ export const borsaSkill: Skill = {
   emoji: '📈',
   description:
     'Borsa, hisse senetleri, piyasa analizleri ve kripto paralar hakkında güncel finansal özetler ve veri analizi sunar. KAYA (Borsacı Ajanı) görev alır.',
-  triggers: ['borsa', 'piyasa', 'hisse', 'kripto', 'borsacı', 'finans', 'bist', 'coin'],
+  triggers: ['borsa', 'piyasa', 'hisse', 'kripto', 'borsacı', 'finans', 'bist', 'coin', 'altın', 'dolar', 'euro', 'fon', 'tefas'],
   enabled: true,
   execute: async (ctx: SkillContext): Promise<SkillResult> => {
     let query = ctx.userMessage;
