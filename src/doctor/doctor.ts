@@ -41,16 +41,16 @@ export async function runDiagnostics(): Promise<HealthCheck[]> {
   results.push(await checkTempDir());
 
   // 6. Memory system
-  results.push(checkMemory());
+  results.push(await checkMemory());
 
   // 7. Disk space (temp files)
   results.push(await checkTempFiles());
 
-  // 8. Summarize CLI
-  results.push(await checkSummarize());
+  // 8. Google Workspace CLI
+  results.push(await checkGoogleCli());
 
-  // 9. gogcli
-  results.push(await checkGogcli());
+  // 9. Summarize CLI
+  results.push(await checkSummarize());
 
   // 10. System Metrics
   results.push(checkSystemMetrics());
@@ -74,28 +74,31 @@ async function checkEnvVars(): Promise<HealthCheck> {
     const env = getEnv();
     const missing: string[] = [];
 
+    // Kritik değişkenler
     if (!env.TELEGRAM_BOT_TOKEN) missing.push('TELEGRAM_BOT_TOKEN');
     if (!env.MODEL_API_KEY) missing.push('MODEL_API_KEY');
 
     if (missing.length > 0) {
-      return { name: '🔑 Env Vars', status: 'fail', message: `Eksik: ${missing.join(', ')}` };
+      return { name: '🔑 Env Vars', status: 'fail', message: `Kritik eksik: ${missing.join(', ')}` };
     }
 
+    // Opsiyonel ama önemli değişkenler
     const warnings: string[] = [];
     if (!env.ELEVENLABS_API_KEY) warnings.push('ELEVENLABS_API_KEY');
     if (!env.TRANSCRIPTION_API_KEY) warnings.push('TRANSCRIPTION_API_KEY');
+    if (!env.OPENWEATHERMAP_API_KEY) warnings.push('OPENWEATHERMAP_API_KEY');
 
     if (warnings.length > 0) {
       return {
         name: '🔑 Env Vars',
         status: 'warn',
-        message: `Opsiyonel eksik: ${warnings.join(', ')}`,
+        message: `Bazı özellikler kısıtlı olabilir (Eksik: ${warnings.join(', ')})`,
       };
     }
 
-    return { name: '🔑 Env Vars', status: 'ok', message: 'Tüm değişkenler mevcut' };
+    return { name: '🔑 Env Vars', status: 'ok', message: 'Tüm temel değişkenler yapılandırıldı' };
   } catch (error) {
-    return { name: '🔑 Env Vars', status: 'fail', message: 'Env yüklenemedi' };
+    return { name: '🔑 Env Vars', status: 'fail', message: 'Yapılandırma yüklenemedi' };
   }
 }
 
@@ -228,7 +231,7 @@ async function checkTempDir(): Promise<HealthCheck> {
 /**
  * Check memory system (Qdrant)
  */
-function checkMemory(): HealthCheck {
+async function checkMemory(): Promise<HealthCheck> {
   const env = getEnv();
   if (env.VECTOR_DB_MOCK_MODE) {
     return { name: '🧠 Hafıza', status: 'warn', message: 'Mock mod — Qdrant bağlı değil' };
@@ -236,7 +239,33 @@ function checkMemory(): HealthCheck {
   if (!env.QDRANT_URL) {
     return { name: '🧠 Hafıza', status: 'fail', message: 'Qdrant URL eksik' };
   }
-  return { name: '🧠 Hafıza', status: 'ok', message: `Qdrant aktif (${env.QDRANT_COLLECTION})` };
+
+  try {
+    // Ham HTTP health check
+    const baseUrl = env.QDRANT_URL.replace(/\/$/, "");
+    const response = await fetch(`${baseUrl}/healthz`, {
+      signal: AbortSignal.timeout(5000),
+    });
+
+    if (response.ok) {
+      return { 
+        name: '🧠 Hafıza', 
+        status: 'ok', 
+        message: `Qdrant aktif (${env.QDRANT_COLLECTION})` 
+      };
+    }
+    return { 
+      name: '🧠 Hafıza', 
+      status: 'fail', 
+      message: `Qdrant VPS hatası: HTTP ${response.status}` 
+    };
+  } catch (error: any) {
+    return { 
+      name: '🧠 Hafıza', 
+      status: 'fail', 
+      message: `Bağlantı hatası: ${error.message?.substring(0, 50)}` 
+    };
+  }
 }
 
 /**
@@ -301,22 +330,29 @@ async function checkSummarize(): Promise<HealthCheck> {
 }
 
 /**
- * Check gogcli
+ * Check Google Workspace CLI (clasp)
  */
-async function checkGogcli(): Promise<HealthCheck> {
-  const gogPath = path.resolve(process.cwd(), 'gogcli', 'bin', 'gog.exe');
+async function checkGoogleCli(): Promise<HealthCheck> {
   try {
-    if (!fs.existsSync(gogPath)) {
-      return { name: '📅 gogcli', status: 'warn', message: 'Binary bulunamadı' };
-    }
-
-    const { execFile } = await import('child_process');
+    const { exec } = await import('child_process');
     const { promisify } = await import('util');
-    const execFileAsync = promisify(execFile);
-    await execFileAsync(gogPath, ['version'], { timeout: 5000 });
-    return { name: '📅 gogcli', status: 'ok', message: 'Çalışıyor' };
-  } catch {
-    return { name: '📅 gogcli', status: 'warn', message: 'Yanıt vermiyor' };
+    const execAsync = promisify(exec);
+    
+    // Check if clasp is installed
+    const { stdout } = await execAsync('npx clasp --version', { timeout: 10000 });
+    const version = stdout.trim();
+    
+    return { 
+      name: '🌐 Google CLI', 
+      status: 'ok', 
+      message: `clasp v${version} aktif` 
+    };
+  } catch (error: any) {
+    return { 
+      name: '🌐 Google CLI', 
+      status: 'warn', 
+      message: 'clasp kurulu değil veya erişilemiyor' 
+    };
   }
 }
 

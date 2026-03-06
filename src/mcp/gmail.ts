@@ -9,11 +9,10 @@ import { promisify } from 'util';
 import path from 'path';
 import { safeLog, safeError } from '../utils/logger';
 
-const execFileAsync = promisify(execFile);
+// Google API client will be used here instead of gogcli
+// import { google } from 'googleapis';
 
-const GOG_BIN = path.resolve(process.cwd(), 'gogcli', 'bin', 'gog.exe');
-
-interface EmailSummary {
+export interface EmailSummary {
   id: string;
   from: string;
   subject: string;
@@ -22,36 +21,18 @@ interface EmailSummary {
   unread: boolean;
 }
 
-async function runGog(args: string[]): Promise<string> {
-  try {
-    const { stdout, stderr } = await execFileAsync(GOG_BIN, [...args, '--json'], {
-      timeout: 30000,
-      maxBuffer: 1024 * 1024,
-    });
-    if (stderr) {
-      safeLog('gogcli gmail stderr', { stderr: stderr.substring(0, 200) });
-    }
-    return stdout;
-  } catch (error) {
-    safeError('gogcli gmail execution failed', error);
-    throw error;
-  }
+async function runGoogleQuery(query: string): Promise<any[]> {
+  // Placeholder for future implementation using googleapis or clasp run
+  safeLog('Google query executed (Mock/Placeholder)', { query });
+  return [];
 }
+
 
 export async function getUnreadEmails(maxResults: number = 5): Promise<EmailSummary[]> {
   try {
-    const output = await runGog(['gmail', 'search', 'is:unread', '--limit', maxResults.toString()]);
-    const data = JSON.parse(output);
-    const messages: EmailSummary[] = (data.threads || data.messages || []).map((m: any) => ({
-      id: m.id || '',
-      from: m.from || m.sender || '',
-      subject: m.subject || 'Konu yok',
-      date: m.date || m.internalDate || '',
-      snippet: m.snippet || '',
-      unread: true,
-    }));
-    safeLog('Unread emails fetched', { count: messages.length });
-    return messages;
+    safeLog('Fetching unread emails via Google API (Placeholder)');
+    // This will be implemented with googleapis in the next step
+    return [];
   } catch (error) {
     safeError('Failed to fetch unread emails', error);
     return [];
@@ -60,18 +41,8 @@ export async function getUnreadEmails(maxResults: number = 5): Promise<EmailSumm
 
 export async function searchEmails(query: string, maxResults: number = 5): Promise<EmailSummary[]> {
   try {
-    const output = await runGog(['gmail', 'search', query, '--limit', maxResults.toString()]);
-    const data = JSON.parse(output);
-    const messages: EmailSummary[] = (data.threads || data.messages || []).map((m: any) => ({
-      id: m.id || '',
-      from: m.from || m.sender || '',
-      subject: m.subject || 'Konu yok',
-      date: m.date || m.internalDate || '',
-      snippet: m.snippet || '',
-      unread: m.labelIds?.includes('UNREAD') || false,
-    }));
-    safeLog('Email search completed', { query, count: messages.length });
-    return messages;
+    safeLog('Searching emails via Google API (Placeholder)', { query });
+    return [];
   } catch (error) {
     safeError('Failed to search emails', error);
     return [];

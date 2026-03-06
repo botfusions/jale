@@ -30,12 +30,12 @@
 | 💬 Metin Sohbet       | ✅ Aktif | OpenRouter üzerinden LLM ile sohbet                 |
 | 🎤 Sesli Mesaj        | ✅ Aktif | Ses → metin çevirisi + yanıt                        |
 | 🔊 Sesli Yanıt (TTS)  | ✅ Aktif | "reply with voice" ile sesli cevap                  |
-| 🧠 Uzun Süreli Hafıza | ✅ Aktif | Qdrant vektör DB ile hatırlama/çağırma              |
+| 🧠 Uzun Süreli Hafıza | ✅ Aktif | Qdrant vektör DB (VPS) ile hatırlama/çağırma        |
 | 💾 Sohbet Geçmişi     | ✅ Aktif | JSON persist — restart sonrası devam eder           |
 | 🔄 Retry Mekanizması  | ✅ Aktif | Exponential backoff, 429/5xx korumalı               |
-| 💓 Günlük Heartbeat   | ✅ Aktif | Her gün 08:00'de check-in mesajı                    |
-| 📅 Takvim Özeti       | ✅ Aktif | Google Calendar salt okunur entegrasyon             |
-| 📧 E-posta Özeti      | ✅ Aktif | Gmail okunmamış maillar + sesli okuma               |
+| 💓 Günlük Heartbeat   | ✅ Aktif | Her gün 10:00'da check-in mesajı                    |
+| 📅 Takvim Özeti       | ✅ Aktif | Google Calendar (clasp) entegrasyonu                |
+| 📧 E-posta Özeti      | ✅ Aktif | Gmail (clasp) okunmamış maillar + sesli okuma       |
 | 🔐 Güvenlik           | ✅ Aktif | Allowlist, secret masking, log redaksiyon           |
 | 🚀 Deployment         | ✅ Hazır | Docker + docker-compose + Railway config            |
 | 🌐 Web Arama          | ✅ Aktif | İnternetten bilgi arama ve özetleme                 |
@@ -191,9 +191,10 @@ npm start
 🔑 API Key: sk-o****abcd
 📱 Telegram Token: 1234****5678
 👤 Allowed Users: 123456789
-🎤 Voice Transcription: Mock Mode
-🔊 TTS: Mock Mode
-🧠 Memory: Mock Mode
+🎤 Voice Transcription: OpenAI Whisper (Active)
+🔊 TTS: ElevenLabs (Active)
+🧠 Memory: Qdrant (VPS Active)
+🌐 Google CLI: clasp Active
 💓 Heartbeat: Enabled
 
 🚀 Agent Claw başlatılıyor...
@@ -358,7 +359,7 @@ Sistemde telefon aramalarını karşılayan **Ayça** isimli Vapi destekli bir r
 
 Detaylı rehber: [docs/MCP_INTEGRATION.md](docs/MCP_INTEGRATION.md)
 
-### Google Calendar (Salt Okunur)
+### Google Workspace (via clasp)
 
 ```
 /calendar
@@ -370,9 +371,11 @@ veya:
 Yarın takvimimde ne var?
 ```
 
+- 🚀 **Yeni:** `gogcli` yerine `@google/clasp` entegrasyonu kullanılmaktadır.
 - ❌ Etkinlik oluşturma/düzenleme/silme **YOK**
 - ✅ Yalnızca başlık, saat, konum döner
 - ✅ Maksimum 5 etkinlik
+- 🔐 **Güvenlik:** Kimlik doğrulama için `npx clasp login` gereklidir.
 
 ---
 

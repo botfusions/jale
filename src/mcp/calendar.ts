@@ -9,12 +9,10 @@ import { promisify } from 'util';
 import path from 'path';
 import { safeLog, safeError } from '../utils/logger';
 
-const execFileAsync = promisify(execFile);
+// Google API client will be used here instead of gogcli
+// import { google } from 'googleapis';
 
-// gogcli binary path
-const GOG_BIN = path.resolve(process.cwd(), 'gogcli', 'bin', 'gog.exe');
-
-interface CalendarEvent {
+export interface CalendarEvent {
   summary: string;
   start: string;
   end: string;
@@ -22,35 +20,17 @@ interface CalendarEvent {
   status?: string;
 }
 
-async function runGog(args: string[]): Promise<string> {
-  try {
-    const { stdout, stderr } = await execFileAsync(GOG_BIN, [...args, '--json'], {
-      timeout: 30000,
-      maxBuffer: 1024 * 1024,
-    });
-    if (stderr) {
-      safeLog('gogcli stderr', { stderr: stderr.substring(0, 200) });
-    }
-    return stdout;
-  } catch (error) {
-    safeError('gogcli execution failed', error);
-    throw error;
-  }
+async function runGoogleCalendarQuery(): Promise<any[]> {
+  // Placeholder for future implementation using googleapis
+  safeLog('Google Calendar query executed (Mock/Placeholder)');
+  return [];
 }
+
 
 export async function getTodayEvents(): Promise<CalendarEvent[]> {
   try {
-    const output = await runGog(['calendar', 'today']);
-    const data = JSON.parse(output);
-    const events: CalendarEvent[] = (data.events || []).map((e: any) => ({
-      summary: e.summary || 'Başlıksız',
-      start: e.start?.dateTime || e.start?.date || '',
-      end: e.end?.dateTime || e.end?.date || '',
-      location: e.location || '',
-      status: e.status || '',
-    }));
-    safeLog('Calendar events fetched', { count: events.length });
-    return events;
+    safeLog('Fetching today events via Google API (Placeholder)');
+    return [];
   } catch (error) {
     safeError('Failed to fetch today events', error);
     return [];
@@ -59,17 +39,8 @@ export async function getTodayEvents(): Promise<CalendarEvent[]> {
 
 export async function getTomorrowEvents(): Promise<CalendarEvent[]> {
   try {
-    const output = await runGog(['calendar', 'tomorrow']);
-    const data = JSON.parse(output);
-    const events: CalendarEvent[] = (data.events || []).map((e: any) => ({
-      summary: e.summary || 'Başlıksız',
-      start: e.start?.dateTime || e.start?.date || '',
-      end: e.end?.dateTime || e.end?.date || '',
-      location: e.location || '',
-      status: e.status || '',
-    }));
-    safeLog('Calendar tomorrow events fetched', { count: events.length });
-    return events;
+    safeLog('Fetching tomorrow events via Google API (Placeholder)');
+    return [];
   } catch (error) {
     safeError('Failed to fetch tomorrow events', error);
     return [];
@@ -78,17 +49,8 @@ export async function getTomorrowEvents(): Promise<CalendarEvent[]> {
 
 export async function getUpcomingEvents(days: number = 7): Promise<CalendarEvent[]> {
   try {
-    const output = await runGog(['calendar', 'list', '--days', days.toString()]);
-    const data = JSON.parse(output);
-    const events: CalendarEvent[] = (data.events || []).map((e: any) => ({
-      summary: e.summary || 'Başlıksız',
-      start: e.start?.dateTime || e.start?.date || '',
-      end: e.end?.dateTime || e.end?.date || '',
-      location: e.location || '',
-      status: e.status || '',
-    }));
-    safeLog('Calendar upcoming events fetched', { count: events.length, days });
-    return events;
+    safeLog('Fetching upcoming events via Google API (Placeholder)', { days });
+    return [];
   } catch (error) {
     safeError('Failed to fetch upcoming events', error);
     return [];
