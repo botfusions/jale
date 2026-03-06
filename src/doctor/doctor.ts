@@ -92,11 +92,11 @@ async function checkEnvVars(): Promise<HealthCheck> {
       return {
         name: '🔑 Env Vars',
         status: 'warn',
-        message: `Bazı özellikler kısıtlı olabilir (Eksik: ${warnings.join(', ')})`,
+        message: `Bazı özellikler kısıtlı (Eksik: ${warnings.join(', ')})`,
       };
     }
 
-    return { name: '🔑 Env Vars', status: 'ok', message: 'Tüm temel değişkenler yapılandırıldı' };
+    return { name: '🔑 Env Vars', status: 'ok', message: 'Tüm değişkenler hazır' };
   } catch (error) {
     return { name: '🔑 Env Vars', status: 'fail', message: 'Yapılandırma yüklenemedi' };
   }
@@ -315,15 +315,16 @@ async function checkTempFiles(): Promise<HealthCheck> {
  */
 async function checkSummarize(): Promise<HealthCheck> {
   try {
-    const { execFile } = await import('child_process');
+    const summarizePath = path.resolve(process.cwd(), 'summarize/dist/cli.js');
+    if (fs.existsSync(summarizePath)) {
+      return { name: '📝 Summarize', status: 'ok', message: 'Yerel build aktif' };
+    }
+    
+    const { exec } = await import('child_process');
     const { promisify } = await import('util');
-    const execFileAsync = promisify(execFile);
-    const { stdout } = await execFileAsync('npx', ['-y', '@steipete/summarize', '--version'], {
-      timeout: 15000,
-      shell: true,
-    });
-    const version = stdout.trim();
-    return { name: '📝 Summarize', status: 'ok', message: `v${version}` };
+    const execAsync = promisify(exec);
+    await execAsync('npx summarize --version', { timeout: 5000 });
+    return { name: '📝 Summarize', status: 'ok', message: 'npx üzerinden aktif' };
   } catch {
     return { name: '📝 Summarize', status: 'warn', message: 'Kurulu değil — /ozet çalışmaz' };
   }

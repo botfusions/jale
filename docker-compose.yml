@@ -13,6 +13,12 @@ services:
       - redis
     networks:
       - claw_net
+    environment:
+      - NODE_ENV=production
+      - VECTOR_DB_MOCK_MODE=false
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - TRANSCRIPTION_API_KEY=${TRANSCRIPTION_API_KEY}
+      - OPENWEATHERMAP_API_KEY=${OPENWEATHERMAP_API_KEY}
 
   redis:
     image: redis:alpine
