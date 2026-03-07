@@ -39,8 +39,8 @@ COPY --from=builder --chown=node:node /app/package.json ./package.json
 COPY --from=builder --chown=node:node /app/summarize ./summarize
 
 # Gerekli klasörleri oluştur ve izinleri ayarla
-RUN mkdir -p summaries memory research downloads && \
-    chown -R node:node summaries memory research downloads
+RUN mkdir -p summaries memory research downloads tmp && \
+    chown -R node:node /app
 
 # Ortam değişkenleri ve Port
 ENV NODE_ENV=production
