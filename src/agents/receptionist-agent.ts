@@ -62,7 +62,7 @@ export class ReceptionistAgent {
 
       // JALE'yi bilgilendir (Ajanlar arası raporlama)
       const report = `Jale Hanım, ben Resepsiyonist Leya. Yeni bir randevu talebi aldım. Müşteri: ${isim}, Tarih: ${tarih} ${saat}. Bilgilerinize sunarım.`;
-      await this.ceoAgent.processRequest(report);
+      await this.ceoAgent.processRequest(report, 'vapi-receptionist');
 
       return `Randevunuz başarıyla oluşturuldu! Sayın ${isim}, ${tarih} tarihinde saat ${saat}'te sizi bekliyoruz. CEO'muz Jale hanım da konuyla bizzat ilgileniyor.`;
     } catch (error: any) {
@@ -84,7 +84,7 @@ export class ReceptionistAgent {
 
       // JALE'yi bilgilendir
       const report = `Jale Hanım, ben Leya. Beni arayan bir müşterimizin kaydını aldım: ${isim} (${telefon}). Talebi: ${not}. Bilgilerinize sunarım.`;
-      await this.ceoAgent.processRequest(report);
+      await this.ceoAgent.processRequest(report, 'vapi-receptionist');
 
       return `Bilgileriniz kaydedildi ${isim} bey/hanım. En kısa sürede size dönüş yapılacaktır. Telefon numaranız: ${telefon}`;
     } catch (error: any) {
@@ -110,7 +110,8 @@ export class ReceptionistAgent {
       // Bilinmeyen veya stratejik konu ise JALE'ye (Yönetici Asistanı) sor
       safeLog('Consulting Jale for expertise', { konu });
       const jaleResponse = await this.ceoAgent.processRequest(
-        `Jale Hanım, bir müşterimiz şu konuyu soruyor, ne cevap vermeliyim? Konu: ${konu}`
+        `Jale Hanım, bir müşterimiz şu konuyu soruyor, ne cevap vermeliyim? Konu: ${konu}`,
+        'vapi-receptionist'
       );
 
       if (jaleResponse && jaleResponse.content) {

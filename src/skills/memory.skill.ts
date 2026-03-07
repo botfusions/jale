@@ -4,10 +4,10 @@ import { storeMemory, storeImageMemory, recallMemories } from '../memory/vector.
 
 export const memorySkill: Skill = {
   name: 'memory',
-  displayName: 'Hafıza Uzmanı (RECEP)',
+  displayName: 'Hafıza Uzmanı (MEHMET)',
   emoji: '🧠',
   description: 'Bilgileri ve resimleri uzun süreli hafızaya kaydeder veya hatırlar.',
-  triggers: ['hatırla', 'kaydet', 'hafızaya al', 'bu resmi hatırla', 'ne demiştik', 'kimdi'],
+  triggers: ['hatırla', 'kaydet', 'hafızaya al', 'bu resmi hatırla', 'ne demiştik', 'kimdi', 'bul'],
   enabled: true,
   execute: async (ctx: SkillContext): Promise<SkillResult> => {
     try {
@@ -40,11 +40,11 @@ export const memorySkill: Skill = {
       }
 
       // Bilgi hatırlama/sorgulama
-      const memories = await recallMemories(userMessage, 3);
+      const memories = await recallMemories(userMessage, userId, 3);
       if (memories.length > 0) {
         const memoryText = memories.map(m => `• ${m.text}`).join('\n');
         return {
-          text: `🧠 **Hatırladıklarım:**\n\n${memoryText}`,
+          text: `🧠 **MEHMET Hatırlıyor:**\n\n${memoryText}`,
           voiceText: 'İlgili bilgileri hatırladım.',
         };
       }

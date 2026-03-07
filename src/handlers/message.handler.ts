@@ -97,6 +97,7 @@ export async function handleRemember(ctx: Context): Promise<void> {
 
 export async function handleRecall(ctx: Context): Promise<void> {
   const query = ctx.message?.text?.replace(/^\/recall\s*/i, '').trim();
+  const userId = ctx.from?.id?.toString() || 'unknown';
 
   if (!query) {
     await ctx.reply('⚠️ Lütfen arama sorgusu yazın.\nÖrnek: `/recall kahve tercihi`', {
@@ -106,7 +107,7 @@ export async function handleRecall(ctx: Context): Promise<void> {
   }
 
   try {
-    const memories = await recallMemories(query);
+    const memories = await recallMemories(query, userId);
 
     if (memories.length === 0) {
       await ctx.reply(`🔍 "${query}" ile ilgili hafızada bir şey bulunamadı.`);
@@ -140,7 +141,7 @@ export async function handleJaleCommand(ctx: Context): Promise<void> {
     await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
     const startTime = Date.now();
     const history = getHistoryForLLM(userId) as LLMMessage[];
-    const response = await ceoAgent.processRequest(text, history);
+    const response = await ceoAgent.processRequest(text, userId, history);
     metrics.recordApiCall(Date.now() - startTime);
     addToHistory(userId, 'user', text);
     addToHistory(userId, 'assistant', response.content);
@@ -256,7 +257,7 @@ export async function handleTextMessage(ctx: Context): Promise<void> {
 
     // Build memory context
     const coreMemory = loadCoreMemory();
-    const relevantMemories = await recallMemories(text, 3);
+    const relevantMemories = await recallMemories(text, userId, 3);
     const memoryContext = [
       coreMemory ? `Core Memory:\n${coreMemory}` : '',
       relevantMemories.length > 0
@@ -474,7 +475,7 @@ export async function handleVoiceMessage(ctx: Context, bot: Bot): Promise<void> 
 
     // Build memory context
     const coreMemory = loadCoreMemory();
-    const relevantMemories = await recallMemories(transcription.text, 3);
+    const relevantMemories = await recallMemories(transcription.text, userId, 3);
     const memoryContext = [
       coreMemory ? `Core Memory:\n${coreMemory}` : '',
       relevantMemories.length > 0
@@ -566,7 +567,20 @@ export async function handlePhotoMessage(ctx: Context, bot: Bot): Promise<void> 
 
     // Process with CEO Agent
     const history = getHistoryForLLM(userId) as LLMMessage[];
-    const response = await ceoAgent.processRequest(userContent, history);
+    const response = await ceoAgent.processRequest(userContent, userId, history);
+
+    // AUTOMATION: Store this visual analysis in long-term memory (Qdrant)
+    try {
+      const { storeImageMemory } = await import('../memory/vector.service');
+      // We already have the image in base64, but storeImageMemory expects a URL.
+      // In this version, we store the TEXT analysis as a memory item with 'image' type.
+      const { storeMemory } = await import('../memory/vector.service');
+      const memoryText = `[GÖRSEL ANALİZİ] ${response.content}`;
+      await storeMemory(memoryText, userId, 'auto_image_analysis');
+      safeLog('Auto-indexed image analysis in memory', { userId });
+    } catch (memErr) {
+      safeError('Failed to auto-index image analysis', memErr);
+    }
 
     addToHistory(userId, 'user', `[Photo] ${caption}`);
     addToHistory(userId, 'assistant', response.content);
@@ -621,7 +635,7 @@ export async function handleDocumentMessage(ctx: Context, bot: Bot): Promise<voi
 
     // Process with CEO Agent
     const history = getHistoryForLLM(userId) as LLMMessage[];
-    const response = await ceoAgent.processRequest(combinedMessage, history);
+    const response = await ceoAgent.processRequest(combinedMessage, userId, history);
 
     addToHistory(userId, 'user', `[Document: ${doc.file_name}] ${caption}`);
     addToHistory(userId, 'assistant', response.content);

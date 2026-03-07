@@ -92,11 +92,11 @@ export async function storeMemory(
   }
 }
 
-export async function recallMemories(query: string, topK: number = 5): Promise<MemoryRecord[]> {
+export async function recallMemories(query: string, userId: string, topK: number = 5): Promise<MemoryRecord[]> {
   const env = getEnv();
 
   if (env.VECTOR_DB_MOCK_MODE) {
-    const results = memoryManager.search(query, topK);
+    const results = memoryManager.search(query, userId, topK);
     return results.map((m) => ({
       id: m.id,
       text: m.text,
@@ -121,6 +121,9 @@ export async function recallMemories(query: string, topK: number = 5): Promise<M
           limit: topK,
           with_payload: true,
           score_threshold: 0.5,
+          filter: {
+            must: [{ key: 'userId', match: { value: userId } }],
+          },
         }),
       }
     );
@@ -137,7 +140,7 @@ export async function recallMemories(query: string, topK: number = 5): Promise<M
     }));
   } catch (error) {
     // Qdrant hata verirse JSON hafızadan getir
-    const results = memoryManager.search(query, topK);
+    const results = memoryManager.search(query, userId, topK);
     return results.map((m) => ({
       id: m.id,
       text: m.text,

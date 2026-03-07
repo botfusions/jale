@@ -111,8 +111,10 @@ export class MemoryManager {
     fs.writeFileSync(archiveFile, JSON.stringify(updatedArchive, null, 2), 'utf-8');
   }
 
-  public search(query: string, limit: number = 10): MemoryItem[] {
+  public search(query: string, userId: string, limit: number = 10): MemoryItem[] {
     const queryLower = query.toLowerCase();
-    return this.memories.filter((m) => m.text.toLowerCase().includes(queryLower)).slice(0, limit);
+    return this.memories
+      .filter((m) => m.userId === userId && m.text.toLowerCase().includes(queryLower))
+      .slice(0, limit);
   }
 }

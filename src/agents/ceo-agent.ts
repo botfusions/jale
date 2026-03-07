@@ -11,7 +11,7 @@ export class CEOAgent {
     this.guard = AgentGuard.getInstance();
   }
 
-  public async processRequest(userInput: LLMContent, history: LLMMessage[] = []): Promise<LLMResponse> {
+  public async processRequest(userInput: LLMContent, userId: string, history: LLMMessage[] = []): Promise<LLMResponse> {
     safeLog(`${this.name} processing user request`);
 
     // 1. Sanitize input
@@ -191,7 +191,7 @@ Core Memory: **Qdrant** (Vector DB) for long-term recall.
               try {
                 const res = await skill.execute({
                   userMessage: args.request,
-                  userId: 'JALE_DELEGATION',
+                  userId: userId || 'JALE_DELEGATION',
                 });
                 toolResultText = res.text;
               } catch (err: any) {

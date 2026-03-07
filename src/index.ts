@@ -105,7 +105,7 @@ async function main(): Promise<void> {
       const history = getHistoryForLLM(sessionId);
 
       const ceo = new CEOAgent();
-      const response = await ceo.processRequest(message, history);
+      const response = await ceo.processRequest(message, sessionId, history);
 
       addToHistory(sessionId, 'user', message);
       addToHistory(sessionId, 'assistant', response.content);
