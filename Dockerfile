@@ -29,8 +29,8 @@ WORKDIR /app
 # Gerekli sistem paketleri (isteğe bağlı ama önerilir)
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
-# PM2, pnpm ve Claude Code kurulumu
-RUN npm install -g pm2 pnpm @anthropic-ai/claude-code
+# PM2, pnpm, Claude Code ve OpenCode kurulumu
+RUN npm install -g pm2 pnpm @anthropic-ai/claude-code opencode-ai@latest
 
 # Builder stage'den sadece derlenmiş dosyaları ve modülleri al (izinlerle birlikte)
 COPY --from=builder --chown=node:node /app/dist ./dist

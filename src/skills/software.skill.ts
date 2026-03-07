@@ -28,7 +28,7 @@ export const softwareSkill: Skill = {
       safeLog('Software Skill running', { request: ctx.userMessage });
 
       const systemPrompt = `
-You are RECEP, the Senior Software Engineer of the Agent Swarm.
+You are MEHMET, the Senior Software Engineer of the Agent Swarm.
 Your expertise:
 - Writing high-quality code and managing the system infrastructure.
 - You HAVE actual terminal access via the 'terminal_execute' tool.
@@ -37,7 +37,7 @@ Your expertise:
 
 Guidelines:
 1. If a user wants to install something or set up a repo, use 'terminal_execute'.
-2. For complex, multi-step coding tasks, refactoring, or building entire features, use the 'claude_code_task' tool. This activates a specialized autonomous agent (Claude Code) to handle the heavy lifting.
+2. For complex, multi-step coding tasks, refactoring, or building entire features, use the 'opencode_task' tool. This activates a specialized autonomous agent (OpenCode AI) to handle the heavy lifting.
 3. Always provide clean code and professional explanations.
 4. Primarily communicate in Turkish (except technical terms/code).
       `.trim();
@@ -45,7 +45,7 @@ Guidelines:
       const response = await chat(
         ctx.userMessage,
         [],
-        `Role: Software Specialist (RECEP)\n${systemPrompt}`,
+        `Role: Software Specialist (MEHMET)\n${systemPrompt}`,
         [
           {
             type: 'function',
@@ -65,8 +65,8 @@ Guidelines:
           {
             type: 'function',
             function: {
-              name: 'claude_code_task',
-              description: 'Run a complex multi-step coding task using Claude Code (agent-in-agent).',
+              name: 'opencode_task',
+              description: 'Run a complex multi-step coding task using OpenCode AI CLI (autonomous agent).',
               parameters: {
                 type: 'object',
                 properties: {
@@ -92,43 +92,43 @@ Guidelines:
           const finalSummary = await chat(
             `Terminal Result: ${result}\n\nUser Message: ${ctx.userMessage}`,
             [],
-            `Role: Software Specialist (RECEP)\nSummarize the result of the terminal command and explain the next steps to the user.`,
+            `Role: Software Specialist (MEHMET)\nSummarize the result of the terminal command and explain the next steps to the user.`,
             [],
             'z-ai/glm-5'
           );
 
           return {
-            text: `💻 **Software Uzmanı (RECEP) Yanıtı:**\n\n${finalSummary.content}`,
+            text: `💻 **Software Uzmanı (MEHMET) Yanıtı:**\n\n${finalSummary.content}`,
             voiceText: 'Terminal komutunu çalıştırdım ve sonucu özetledim.',
             data: result,
           };
         }
 
-        if (call.function.name === 'claude_code_task') {
+        if (call.function.name === 'opencode_task') {
           const args = JSON.parse(call.function.arguments);
-          safeLog('Executing Claude Code Task', { task: args.task });
+          safeLog('Executing OpenCode Task', { task: args.task });
           
-          // Use npx to run the one-shot MCP version of claude-code
-          const result = await spawnCommand('npx', ['-y', '@steipete/claude-code-mcp@latest', args.task]);
+          // Use opencode in non-interactive mode
+          const result = await spawnCommand('opencode', [args.task]);
 
           const finalSummary = await chat(
-            `Claude Code Result: ${result}\n\nOriginal Task: ${args.task}`,
+            `OpenCode Result: ${result}\n\nOriginal Task: ${args.task}`,
             [],
-            `Role: Software Specialist (RECEP)\nExplain the outcome of the Claude Code autonomous task to the user.`,
+            `Role: Software Specialist (MEHMET)\nExplain the outcome of the OpenCode autonomous task to the user.`,
             [],
             'z-ai/glm-5'
           );
 
           return {
-            text: `🤖 **Claude Code (Otonom) Sonucu:**\n\n${finalSummary.content}`,
-            voiceText: 'Karmaşık görevi otonom araçla tamamladım.',
+            text: `🤖 **OpenCode AI CLI Sonucu:**\n\n${finalSummary.content}`,
+            voiceText: 'Karmaşık görevi OpenCode ile tamamladım.',
             data: result,
           };
         }
       }
 
       return {
-        text: `💻 **Software Uzmanı (RECEP) Yanıtı:**\n\n${response.content}`,
+        text: `💻 **Software Uzmanı (MEHMET) Yanıtı:**\n\n${response.content}`,
         voiceText: 'İsteğini inceledim, raporu hazırladım.',
         data: response.content,
       };
