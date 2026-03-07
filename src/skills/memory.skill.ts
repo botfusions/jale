@@ -4,7 +4,7 @@ import { storeMemory, storeImageMemory, recallMemories } from '../memory/vector.
 
 export const memorySkill: Skill = {
   name: 'memory',
-  displayName: 'Hafıza Uzmanı (MEHMET)',
+  displayName: 'Hafıza Uzmanı (RECEP)',
   emoji: '🧠',
   description: 'Bilgileri ve resimleri uzun süreli hafızaya kaydeder veya hatırlar.',
   triggers: ['hatırla', 'kaydet', 'hafızaya al', 'bu resmi hatırla', 'ne demiştik', 'kimdi', 'bul'],
@@ -44,7 +44,7 @@ export const memorySkill: Skill = {
       if (memories.length > 0) {
         const memoryText = memories.map(m => `• ${m.text}`).join('\n');
         return {
-          text: `🧠 **MEHMET Hatırlıyor:**\n\n${memoryText}`,
+          text: `🧠 **RECEP Hatırlıyor:**\n\n${memoryText}`,
           voiceText: 'İlgili bilgileri hatırladım.',
         };
       }
