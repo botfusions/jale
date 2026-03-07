@@ -30,25 +30,47 @@ async function ensureCollection(): Promise<void> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (env.QDRANT_API_KEY) headers['api-key'] = env.QDRANT_API_KEY;
 
-  try {
-    const checkResponse = await fetch(`${baseUrl}/collections/${collection}`, {
-      method: 'GET',
-      headers,
-      signal: AbortSignal.timeout(5000),
-    });
-    if (checkResponse.ok) {
-      collectionEnsured = true;
-      return;
+  const tryUrl = async (url: string) => {
+    try {
+      const checkResponse = await fetch(`${url}/collections/${collection}`, {
+        method: 'GET',
+        headers,
+        signal: AbortSignal.timeout(3000),
+      });
+      return checkResponse.ok;
+    } catch {
+      return false;
     }
-    await fetch(`${baseUrl}/collections/${collection}`, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify({ vectors: { size: 1536, distance: 'Cosine' } }),
-      signal: AbortSignal.timeout(10000),
-    });
+  };
+
+  // 1. Try configured URL
+  if (await tryUrl(baseUrl)) {
     collectionEnsured = true;
+    return;
+  }
+
+  // 2. Try internal Docker fallback if external fails
+  const internalFallback = 'http://qdrant:6333';
+  if (baseUrl !== internalFallback && await tryUrl(internalFallback)) {
+    safeLog('Connected to Qdrant via internal Docker fallback', { internalFallback });
+    // Update runtime env so subsequent calls use the working URL
+    const { updateEnvRuntime } = await import('../config/env');
+    updateEnvRuntime('QDRANT_URL', internalFallback);
+    collectionEnsured = true;
+    return;
+  }
+
+  // 3. Fallback to PUT (create) if reachable but not found
+  try {
+     const res = await fetch(`${baseUrl}/collections/${collection}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ vectors: { size: 1536, distance: 'Cosine' } }),
+        signal: AbortSignal.timeout(10000),
+      });
+      if (res.ok) collectionEnsured = true;
   } catch (error) {
-    safeError('Qdrant collection check failed', error);
+    safeError('Qdrant connection/creation failed', error);
   }
 }
 
