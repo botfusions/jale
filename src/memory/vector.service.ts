@@ -145,3 +145,68 @@ export async function recallMemories(query: string, topK: number = 5): Promise<M
     }));
   }
 }
+
+/**
+ * Analyze an image and store its description in memory.
+ */
+export async function storeImageMemory(
+  imageUrl: string,
+  userId: string,
+  source: string = 'user'
+): Promise<string> {
+  const env = getEnv();
+  const id = uuidv4();
+  const timestamp = new Date().toISOString();
+
+  try {
+    // 1. Her zaman vision yeteneği olan bir model kullanarak resmi analiz et
+    // Bu aşamada openrouter.ts içindeki chat fonksiyonunu kullanıyoruz.
+    // Not: Vision desteği için mesaj yapısının image_url içermesi gerekir.
+    const { chat } = await import('../llm/openrouter');
+    
+    // Vision için OpenAI formatında mesaj içeriği hazırlıyoruz
+    const visionMessages: any[] = [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'Bu resimde ne görüyorsun? Hafızada saklanmak üzere detaylı ama öz bir açıklama yap.' },
+          { type: 'image_url', image_url: { url: imageUrl } }
+        ]
+      }
+    ];
+
+    const response = await chat(null, visionMessages, '', [], 'openai/gpt-4o-mini');
+    const text = `[GÖRSEL ANALİZİ] ${response.content}`;
+
+    // 2. Her zaman JSON tabanlı yerel hafızaya kaydet
+    memoryManager.addMemory({ id, text, timestamp, userId, source });
+
+    if (env.VECTOR_DB_MOCK_MODE) {
+      safeLog('Image memory stored in local JSON (mock mode)', { id });
+      return id;
+    }
+
+    // 3. Qdrant'a kaydet
+    await ensureCollection();
+    const embedding = await withRetry(() => generateEmbedding(text), 'Embedding for image store');
+    const baseUrl = env.QDRANT_URL;
+    const collection = env.QDRANT_COLLECTION;
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (env.QDRANT_API_KEY) headers['api-key'] = env.QDRANT_API_KEY;
+
+    await fetch(`${baseUrl}/collections/${collection}/points`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({
+        points: [{ id, vector: embedding, payload: { text, source, timestamp, userId, type: 'image', imageUrl } }],
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+    
+    safeLog('Image memory stored in Qdrant', { id });
+    return id;
+  } catch (error) {
+    safeError('Qdrant image store failed', error);
+    return id;
+  }
+}

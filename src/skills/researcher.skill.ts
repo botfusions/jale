@@ -1,13 +1,15 @@
 import { Skill, SkillContext, SkillResult } from './skill-manager';
 import { safeLog, safeError } from '../utils/logger';
-import { chat, LLMMessage } from '../llm/openrouter';
+import { chat } from '../llm/openrouter';
+import { searchBrave, BraveSearchResult } from '../utils/brave-search';
+import { scrapeWithScrapling } from '../utils/scraper';
 
 export const researcherSkill: Skill = {
   name: 'researcher',
-  displayName: 'Araştırmacı Ajan',
-  emoji: '🔬',
-  description: 'Verilen bir konu hakkında derinlemesine analiz ve araştırma raporu sunar.',
-  triggers: ['araştır', 'analiz et', 'derin araştırma', 'raporla'],
+  displayName: 'Araştırmacı (AYÇA)',
+  emoji: '🔍',
+  description: 'Verilen bir konu hakkında internette derinlemesine araştırma yapar ve rapor sunar.',
+  triggers: ['araştır', 'analiz et', 'derin araştırma', 'raporla', 'incele'],
   enabled: true,
   execute: async (ctx: SkillContext): Promise<SkillResult> => {
     try {
@@ -26,21 +28,46 @@ export const researcherSkill: Skill = {
         };
       }
 
-      safeLog('Researcher Skill running', { query });
+      safeLog('Ayça (Researcher) starting deep research', { query });
 
+      // Step 1: Search for information
+      const searchResults = await searchBrave(query);
+      let context = '';
+
+      if (searchResults.length > 0) {
+        safeLog('Ayça found search results, preparing to scrape top links');
+        
+        // Step 2: Scrape top 2 results for deep context
+        const linksToScrape = searchResults.slice(0, 2);
+        const scrapePromises = linksToScrape.map(link => scrapeWithScrapling(link.url));
+        const scrapeResults = await Promise.all(scrapePromises);
+
+        context = scrapeResults
+          .filter(r => r.status === 'success')
+          .map(r => `--- KAYNAK: ${r.title} (${r.url}) ---\n${r.content}\n`)
+          .join('\n');
+      }
+
+      // Step 3: Synthesis with LLM
       const systemPrompt = `
-You are the Chief Researcher Agent of the Agent Swarm.
-Your task is to provide a deep, well-structured, and comprehensive analysis of the requested topic.
-- Break down the topic into logical sections (e.g., Overview, Key Points, Analysis, Conclusion).
-- Be extremely factual and detail-oriented.
+You are AYÇA, the Chief Researcher Agent of the Jale AI Swarm.
+Your task is to provide a deep, well-structured, and comprehensive analysis based on the provided web context and your own knowledge.
+
+CONTEXT FROM WEB SEARCH & SCRAPING:
+${context || 'No direct web context available, use your internal knowledge base.'}
+
+INSTRUCTIONS:
+- Break down the analysis into logical sections (Overview, Key Findings, Details, Conclusion).
+- Always cite the sources if provided in context.
+- Be extremely factual, professional, and detail-oriented.
 - Respond in Turkish.
       `.trim();
 
-      const response = await chat(query, [], systemPrompt);
+      const response = await chat(`Konu: ${query}\n\nLütfen bu konuyu derinlemesine analiz et.`, [], systemPrompt);
 
       return {
-        text: `🔬 **Araştırma Raporu:**\n\n${response.content}`,
-        voiceText: 'Araştırma raporunuz hazır. Ekranda okuyabilirsiniz.',
+        text: `🔬 **Ayça'nın Araştırma Raporu:**\n\n${response.content}`,
+        voiceText: 'Araştırma raporunuzu internetteki en güncel verilere dayanarak hazırladım.',
       };
     } catch (error: any) {
       safeError('Researcher Skill Error', error);

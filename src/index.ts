@@ -42,7 +42,7 @@ async function main(): Promise<void> {
 ╚══════════════════════════════════════════╝
   `);
 
-  safeLog('Starting Agent Claw', {
+  safeLog('Starting Jale AI', {
     version: APP_VERSION,
     environment: env.NODE_ENV,
     model: env.MODEL_NAME,
@@ -170,7 +170,7 @@ async function main(): Promise<void> {
   cleanupAllTempFiles();
 
   // Start bot
-  console.log('🚀 Agent Claw başlatılıyor...');
+  console.log('🚀 Jale AI başlatılıyor...');
   bot
     .start({
       onStart: () => {
@@ -190,7 +190,7 @@ async function main(): Promise<void> {
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Agent Claw kapatılıyor...');
+  console.log('\n🛑 Jale AI kapatılıyor...');
   flushConversations();
   cleanupAllTempFiles();
   process.exit(0);

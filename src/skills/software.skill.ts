@@ -5,7 +5,7 @@ import { spawnCommand } from '../utils/shell';
 
 export const softwareSkill: Skill = {
   name: 'software',
-  displayName: 'Yazılım & Kod',
+  displayName: 'Yazılım Uzmanı (MEHMET)',
   emoji: '💻',
   description: 'Karmaşık kod yapıları, CLI araçları ve yazılım geliştirme konularında uzmandır.',
   triggers: [

@@ -36,7 +36,7 @@ const SERVICES = {
 };
 
 export class ReceptionistAgent {
-  private name: string = 'AYÇA_RESEPSİYON';
+  private name: string = 'LEYA_RESEPSİYON';
   private ceoAgent: CEOAgent;
 
   constructor() {
@@ -61,10 +61,10 @@ export class ReceptionistAgent {
       appendMemoryLog(`[RANDEVU] ${isim} | ${telefon} | ${tarih} ${saat}`);
 
       // JALE'yi bilgilendir (Ajanlar arası raporlama)
-      const report = `Jale Hanım, yeni bir randevu talebi aldım. Müşteri: ${isim}, Tarih: ${tarih} ${saat}. Bilgilerinize sunarım.`;
+      const report = `Jale Hanım, ben Resepsiyonist Leya. Yeni bir randevu talebi aldım. Müşteri: ${isim}, Tarih: ${tarih} ${saat}. Bilgilerinize sunarım.`;
       await this.ceoAgent.processRequest(report);
 
-      return `Randevunuz başarıyla oluşturuldu! Sayın ${isim}, ${tarih} tarihinde saat ${saat}'te sizi bekliyoruz. Jale hanım da konuyla bizzat ilgileniyor.`;
+      return `Randevunuz başarıyla oluşturuldu! Sayın ${isim}, ${tarih} tarihinde saat ${saat}'te sizi bekliyoruz. CEO'muz Jale hanım da konuyla bizzat ilgileniyor.`;
     } catch (error: any) {
       safeError('Failed to create appointment', error);
       return `Randevu oluşturulurken bir hata oluştu. Lütfen daha sonra tekrar arayın.`;
@@ -83,7 +83,7 @@ export class ReceptionistAgent {
       appendMemoryLog(`[MÜŞTERİ] ${isim} | ${telefon}`);
 
       // JALE'yi bilgilendir
-      const report = `Jale Hanım, beni arayan bir müşterimizin kaydını aldım: ${isim} (${telefon}). Talebi: ${not}. Bilgilerinize sunarım.`;
+      const report = `Jale Hanım, ben Leya. Beni arayan bir müşterimizin kaydını aldım: ${isim} (${telefon}). Talebi: ${not}. Bilgilerinize sunarım.`;
       await this.ceoAgent.processRequest(report);
 
       return `Bilgileriniz kaydedildi ${isim} bey/hanım. En kısa sürede size dönüş yapılacaktır. Telefon numaranız: ${telefon}`;

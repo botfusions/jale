@@ -4,8 +4,8 @@ import { chat } from '../llm/openrouter';
 
 export const marketingSkill: Skill = {
   name: 'marketing',
-  displayName: 'Reklamcı Ajan',
-  emoji: '💡',
+  displayName: 'Pazarlama Uzmanı (BANU)',
+  emoji: '📢',
   description: 'Reklam metinleri, pazarlama stratejileri ve vurucu kampanya fikirleri üretir.',
   triggers: ['reklam', 'kampanya', 'pazarlama', 'marketing'],
   enabled: true,

@@ -1,6 +1,6 @@
-export const APP_NAME = 'Botfusions';
-export const APP_VERSION = '1.0.0';
-export const APP_EMOJI = '🌟';
+export const APP_NAME = 'Jale AI';
+export const APP_VERSION = '1.1.0';
+export const APP_EMOJI = '👸';
 
 export const MAX_CONTEXT_TOKENS = 4096;
 export const MAX_MEMORY_RESULTS = 5;
@@ -33,7 +33,7 @@ export const VOICE_TRIGGERS = [
 ];
 
 export const MESSAGES = {
-  WELCOME: `${APP_EMOJI} Merhaba! Ben **Jale** — **Botfusions** adına senin kişisel AI asistanın ve Yalın Kültür liderinim.\n\nBana metin veya sesli mesaj gönderebilirsin. Yardım için /help yaz.`,
+  WELCOME: `${APP_EMOJI} Merhaba! Ben **Jale**. Senin kişisel AI asistanın ve ekosistem liderinim.\n\nBana metin veya sesli mesaj gönderebilirsin. Yardım için /help yaz.`,
   HELP: [
     `${APP_EMOJI} **Botfusions İşletim Sistemi Komutları:**\n`,
     '💬 **Sohbet:**',

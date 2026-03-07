@@ -16,6 +16,7 @@ export interface SkillContext {
   userMessage: string;
   userId: string;
   args?: string;
+  data?: any; // Structured data for additional context (e.g. image URLs)
 }
 
 export interface SkillResult {

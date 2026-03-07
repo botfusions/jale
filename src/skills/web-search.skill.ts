@@ -1,20 +1,19 @@
 import { Skill, SkillContext, SkillResult } from './skill-manager';
 import { safeLog, safeError } from '../utils/logger';
+import { searchBrave } from '../utils/brave-search';
 
 export const webSearchSkill: Skill = {
   name: 'web-search',
-  displayName: 'Web Arama',
+  displayName: 'Web Arama (BRAVE)',
   emoji: '🔍',
-  description: 'İnternette arama yapar ve özet bilgi sunar.',
+  description: 'İnternette profesyonel arama yapar ve özet bilgi sunar.',
   triggers: ['ara ', 'bul ', 'nedir', 'kimdir', 'search'],
   enabled: true,
   execute: async (ctx: SkillContext): Promise<SkillResult> => {
     try {
-      // Extract the query from the user message
       let query = ctx.userMessage;
       for (const trigger of webSearchSkill.triggers) {
         if (query.toLowerCase().includes(trigger)) {
-          // Remove the trigger to get the actual query
           query = query.replace(new RegExp(trigger, 'i'), '').trim();
           break;
         }
@@ -27,9 +26,24 @@ export const webSearchSkill: Skill = {
         };
       }
 
-      safeLog('Web Search running', { query });
+      safeLog('Web Search running (Brave Priority)', { query });
 
-      // Search using DuckDuckGo Html version (simple and doesn't require API key)
+      // Try Brave Search first
+      const braveResults = await searchBrave(query);
+      
+      if (braveResults.length > 0) {
+        const results = braveResults.slice(0, 3).map(r => 
+          `**${r.title}**\n${r.description}\n[Kaynak](${r.url})`
+        );
+
+        return {
+          text: `🔍 **Brave ile "${query}" İçin Arama Sonuçları:**\n\n` + results.join('\n\n'),
+          voiceText: `Brave üzerinden arama yaptım, birkaç güncel sonuç buldum.`,
+        };
+      }
+
+      // Fallback to DuckDuckGo if Brave yields no results or no API key
+      safeLog('Falling back to DuckDuckGo for search');
       const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
       const response = await fetch(searchUrl, {
         headers: {
@@ -43,9 +57,6 @@ export const webSearchSkill: Skill = {
       }
 
       const html = await response.text();
-
-      // Very simple parsing of the HTML to extract the first few results
-      // This is a basic approach; a robust solution might parse with cheerio or use an actual API
       const resultMatches = html.match(
         /<a class="result__url" href="([^"]+)".*?>(.*?)<\/a>.*?<a class="result__snippet[^>]+>(.*?)<\/a>/gis
       );
@@ -60,13 +71,8 @@ export const webSearchSkill: Skill = {
       const results: string[] = [];
       let limit = 0;
       for (const match of resultMatches) {
-        if (limit >= 3) break; // Limit to 3 results
-
-        // Match group 1: href, group 2: title, group 3: snippet
-        const m =
-          /<a class="result__url" href="([^"]+)".*?>(.*?)<\/a>.*?<a class="result__snippet[^>]+>(.*?)<\/a>/is.exec(
-            match
-          );
+        if (limit >= 3) break;
+        const m = /<a class="result__url" href="([^"]+)".*?>(.*?)<\/a>.*?<a class="result__snippet[^>]+>(.*?)<\/a>/is.exec(match);
         if (m && m.length === 4) {
           let href = m[1].trim();
           if (href.startsWith('//')) {
@@ -74,24 +80,16 @@ export const webSearchSkill: Skill = {
             const rawUddg = parsedUrl.searchParams.get('uddg');
             href = rawUddg ? decodeURIComponent(rawUddg) : href;
           }
-
-          const title = m[2].replace(/<\/?[^>]+(>|$)/g, '').trim(); // Strip HTML from title
-          const snippet = m[3].replace(/<\/?[^>]+(>|$)/g, '').trim(); // Strip HTML from snippet
-
+          const title = m[2].replace(/<\/?[^>]+(>|$)/g, '').trim();
+          const snippet = m[3].replace(/<\/?[^>]+(>|$)/g, '').trim();
           results.push(`**${title}**\n${snippet}\n[Kaynak](${href})`);
           limit++;
         }
       }
 
-      if (results.length === 0) {
-        return { text: `"${query}" hakkında sonuçları ayrıştıramadım.` };
-      }
-
-      const replyText = `🔍 **"${query}" İçin Arama Sonuçları:**\n\n` + results.join('\n\n');
-
       return {
-        text: replyText,
-        voiceText: `İnternette arama yaptım, birkaç sonuç buldum. Sonuçları ekranda görebilirsiniz.`,
+        text: `🔍 **"${query}" İçin Arama Sonuçları:**\n\n` + results.join('\n\n'),
+        voiceText: `İnternette arama yaptım, birkaç sonuç buldum.`,
       };
     } catch (error: any) {
       safeError('Web Search Skill Error', error);

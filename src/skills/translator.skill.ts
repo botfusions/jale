@@ -3,8 +3,8 @@ import { safeLog, safeError } from '../utils/logger';
 
 export const translatorSkill: Skill = {
   name: 'translator',
-  displayName: 'Çeviri',
-  emoji: '🌐',
+  displayName: 'Tercüman (VOLKAN)',
+  emoji: '🌍',
   description: "Metinleri anında İngilizce veya Türkçe'ye çevirir.",
   triggers: ['çevir', 'translate', 'ingilizceye çevir', 'türkçeye çevir', 'ingilizce', 'türkçe'],
   enabled: true,

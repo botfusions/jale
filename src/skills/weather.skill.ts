@@ -4,8 +4,8 @@ import { getEnv } from '../config/env';
 
 export const weatherSkill: Skill = {
   name: 'weather',
-  displayName: 'Hava Durumu',
-  emoji: '⛅',
+  displayName: 'Meteorolog (FÜSUN)',
+  emoji: '🌦️',
   description: 'Belirtilen şehrin güncel hava durumunu gösterir.',
   triggers: ['hava durumu', 'hava nasıl', 'kaç derece', 'sıcaklık', 'weather'],
   enabled: true,

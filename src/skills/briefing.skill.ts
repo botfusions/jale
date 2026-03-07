@@ -4,8 +4,8 @@ import { weatherSkill } from './weather.skill';
 
 export const briefingSkill: Skill = {
   name: 'briefing',
-  displayName: 'Günlük Brifing',
-  emoji: '📰',
+  displayName: 'Planlama Uzmanı (ERCÜMENT)',
+  emoji: '📅',
   description: 'Sabah hava durumu, günün özeti ve hatırlatmaları sunar.',
   triggers: ['brifing', 'günün özeti', 'bugün ne var', 'sabah raporu'],
   enabled: true,

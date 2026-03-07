@@ -331,8 +331,20 @@ export async function handleTextMessage(ctx: Context): Promise<void> {
 
           if (skill && skill.enabled) {
             try {
+              // Notify user that Jale is delegating
+              const delegationEmoji = '🔄';
+              const agentEmoji = skill.emoji || '🤖';
+              const agentName = skill.displayName.split('(')[1]?.replace(')', '') || skillName.toUpperCase();
+              
+              await ctx.reply(`${delegationEmoji} **JALE -> ${agentName}:**\n_"${args.request}"_`, { parse_mode: 'Markdown' });
+              await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
+
               const res = await skill.execute({ userMessage: args.request, userId });
               toolResult = res.text;
+              
+              // Notify user that the agent has responded
+              await ctx.reply(`${agentEmoji} **${agentName}:**\n\n${toolResult}`, { parse_mode: 'Markdown' });
+              
               safeLog('Tool execution success', {
                 skill: skillName,
                 result: toolResult.substring(0, 100) + '...',
@@ -340,6 +352,7 @@ export async function handleTextMessage(ctx: Context): Promise<void> {
             } catch (err: any) {
               safeError(`Tool execution failed: ${skillName}`, err);
               toolResult = `Hata: ${err.message}`;
+              await ctx.reply(`⚠️ **${skillName}** işlemi sırasında bir hata oluştu: ${err.message}`);
             }
           } else {
             toolResult = `Skill ${skillName} bulunamadı veya kapalı.`;
