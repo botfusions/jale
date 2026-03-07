@@ -77,7 +77,7 @@ export async function storeMemory(
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (env.QDRANT_API_KEY) headers['api-key'] = env.QDRANT_API_KEY;
 
-    await fetch(`${baseUrl}/collections/${collection}/points`, {
+    const res = await fetch(`${baseUrl}/collections/${collection}/points`, {
       method: 'PUT',
       headers,
       body: JSON.stringify({
@@ -85,10 +85,18 @@ export async function storeMemory(
       }),
       signal: AbortSignal.timeout(10000),
     });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Qdrant error (${res.status}): ${errorText}`);
+    }
+
+    safeLog('Memory stored in Qdrant', { id });
     return id;
   } catch (error) {
-    safeError('Qdrant store failed, saved to local JSON', error);
-    return id;
+    safeError('Qdrant store failed', error);
+    // Rethrow to let the caller know it failed to sync with vector DB
+    throw error;
   }
 }
 
@@ -197,7 +205,7 @@ export async function storeImageMemory(
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (env.QDRANT_API_KEY) headers['api-key'] = env.QDRANT_API_KEY;
 
-    await fetch(`${baseUrl}/collections/${collection}/points`, {
+    const res = await fetch(`${baseUrl}/collections/${collection}/points`, {
       method: 'PUT',
       headers,
       body: JSON.stringify({
@@ -205,11 +213,16 @@ export async function storeImageMemory(
       }),
       signal: AbortSignal.timeout(10000),
     });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Qdrant error (${res.status}): ${errorText}`);
+    }
     
     safeLog('Image memory stored in Qdrant', { id });
     return id;
   } catch (error) {
     safeError('Qdrant image store failed', error);
-    return id;
+    throw error;
   }
 }

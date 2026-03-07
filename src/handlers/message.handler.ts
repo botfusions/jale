@@ -570,22 +570,22 @@ export async function handlePhotoMessage(ctx: Context, bot: Bot): Promise<void> 
     const response = await ceoAgent.processRequest(userContent, userId, history);
 
     // AUTOMATION: Store this visual analysis in long-term memory (Qdrant)
+    let memoryStatus = '';
     try {
-      const { storeImageMemory } = await import('../memory/vector.service');
-      // We already have the image in base64, but storeImageMemory expects a URL.
-      // In this version, we store the TEXT analysis as a memory item with 'image' type.
       const { storeMemory } = await import('../memory/vector.service');
       const memoryText = `[GÖRSEL ANALİZİ] ${response.content}`;
-      await storeMemory(memoryText, userId, 'auto_image_analysis');
+      const memoryId = await storeMemory(memoryText, userId, 'auto_image_analysis');
+      memoryStatus = `\n\n✅ **Hafıza:** Gelişmiş görsel analizi RECEP tarafından Qdrant hafızasına işlendi. (ID: ${memoryId.substring(0, 8)})`;
       safeLog('Auto-indexed image analysis in memory', { userId });
     } catch (memErr) {
       safeError('Failed to auto-index image analysis', memErr);
+      memoryStatus = `\n\n⚠️ **Hafıza Notu:** Görsel analiz edildi ancak Qdrant senkronizasyonunda bir aksaklık oldu. (Bilgi yerel hafızaya kaydedildi)`;
     }
 
     addToHistory(userId, 'user', `[Photo] ${caption}`);
     addToHistory(userId, 'assistant', response.content);
 
-    await safeReply(ctx, `👸 **JALE (CEO):**\n\n${response.content}`);
+    await safeReply(ctx, `👸 **JALE (CEO):**\n\n${response.content}${memoryStatus}`);
   } catch (error) {
     safeError('Photo handler failed', error);
     await ctx.reply('❌ Fotoğraf işlenirken bir hata oluştu.');
