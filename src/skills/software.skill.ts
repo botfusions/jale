@@ -37,8 +37,9 @@ Your expertise:
 
 Guidelines:
 1. If a user wants to install something or set up a repo, use 'terminal_execute'.
-2. Always provide clean code and professional explanations.
-3. Primarily communicate in Turkish (except technical terms/code).
+2. For complex, multi-step coding tasks, refactoring, or building entire features, use the 'claude_code_task' tool. This activates a specialized autonomous agent (Claude Code) to handle the heavy lifting.
+3. Always provide clean code and professional explanations.
+4. Primarily communicate in Turkish (except technical terms/code).
       `.trim();
 
       const response = await chat(
@@ -61,13 +62,28 @@ Guidelines:
               },
             },
           },
+          {
+            type: 'function',
+            function: {
+              name: 'claude_code_task',
+              description: 'Run a complex multi-step coding task using Claude Code (agent-in-agent).',
+              parameters: {
+                type: 'object',
+                properties: {
+                  task: { type: 'string', description: 'Detailed description of the coding task.' },
+                },
+                required: ['task'],
+              },
+            },
+          },
         ],
-        'anthropic/claude-sonnet-4.6'
+        'z-ai/glm-5'
       );
 
-      // Simple implementation: handle terminal_execute
+      // Handle tool calls
       if (response.tool_calls && response.tool_calls.length > 0) {
         const call = response.tool_calls[0];
+        
         if (call.function.name === 'terminal_execute') {
           const args = JSON.parse(call.function.arguments);
           safeLog('Executing Terminal Command', { args });
@@ -76,14 +92,36 @@ Guidelines:
           const finalSummary = await chat(
             `Terminal Result: ${result}\n\nUser Message: ${ctx.userMessage}`,
             [],
-            `Role: Software Specialist (RECEP)\nSummarize the result of the terminal command and explain the next steps or the outcome to the user.`,
+            `Role: Software Specialist (RECEP)\nSummarize the result of the terminal command and explain the next steps to the user.`,
             [],
-            'anthropic/claude-sonnet-4.6'
+            'z-ai/glm-5'
           );
 
           return {
             text: `💻 **Software Uzmanı (RECEP) Yanıtı:**\n\n${finalSummary.content}`,
             voiceText: 'Terminal komutunu çalıştırdım ve sonucu özetledim.',
+            data: result,
+          };
+        }
+
+        if (call.function.name === 'claude_code_task') {
+          const args = JSON.parse(call.function.arguments);
+          safeLog('Executing Claude Code Task', { task: args.task });
+          
+          // Use npx to run the one-shot MCP version of claude-code
+          const result = await spawnCommand('npx', ['-y', '@steipete/claude-code-mcp@latest', args.task]);
+
+          const finalSummary = await chat(
+            `Claude Code Result: ${result}\n\nOriginal Task: ${args.task}`,
+            [],
+            `Role: Software Specialist (RECEP)\nExplain the outcome of the Claude Code autonomous task to the user.`,
+            [],
+            'z-ai/glm-5'
+          );
+
+          return {
+            text: `🤖 **Claude Code (Otonom) Sonucu:**\n\n${finalSummary.content}`,
+            voiceText: 'Karmaşık görevi otonom araçla tamamladım.',
             data: result,
           };
         }

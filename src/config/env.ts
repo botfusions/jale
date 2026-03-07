@@ -87,6 +87,9 @@ const envSchema = z.object({
   // Vapi
   VAPI_PRIVATE_KEY: z.string().optional().default(''),
   VAPI_WEBHOOK_SECRET: z.string().optional().default(''),
+
+  // Branding
+  APP_URL: z.string().url().default('https://asistan.turklawai.com'),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

@@ -28,24 +28,43 @@ export const researcherSkill: Skill = {
         };
       }
 
-      safeLog('Ayça (Researcher) starting deep research', { query });
+      safeLog('Ayça (Researcher) starting research', { query });
+
+      // Detect if query is JUST a URL
+      const urlRegex = /^(https?:\/\/[^\s]+)$/i;
+      const isDirectUrl = urlRegex.test(query);
+
+      if (isDirectUrl) {
+        safeLog('Ayça detected a direct URL, using summarize utility');
+        const { summarizeContent } = await import('../utils/summarize');
+        const summary = await summarizeContent(query, { model: 'minimax/minimax-m2.5' });
+        
+        return {
+          text: `🔬 **Ayça'nın Hızlı Özet Raporu:**\n\n${summary}`,
+          voiceText: 'Verdiğiniz bağlantıyı saniyeler içinde analiz edip özetledim.',
+        };
+      }
 
       // Step 1: Search for information
       const searchResults = await searchBrave(query);
       let context = '';
 
       if (searchResults.length > 0) {
-        safeLog('Ayça found search results, preparing to scrape top links');
+        safeLog('Ayça found search results, preparing to scrape and summarize top links');
         
-        // Step 2: Scrape top 2 results for deep context
-        const linksToScrape = searchResults.slice(0, 2);
-        const scrapePromises = linksToScrape.map(link => scrapeWithScrapling(link.url));
-        const scrapeResults = await Promise.all(scrapePromises);
-
-        context = scrapeResults
-          .filter(r => r.status === 'success')
-          .map(r => `--- KAYNAK: ${r.title} (${r.url}) ---\n${r.content}\n`)
-          .join('\n');
+        // Step 2: Use summarize on the top result for high-quality context
+        const topLink = searchResults[0].url;
+        try {
+          const { summarizeContent } = await import('../utils/summarize');
+          const summary = await summarizeContent(topLink, { length: 'medium', model: 'minimax/minimax-m2.5' });
+          context = `--- ANA KAYNAK ÖZETİ (${topLink}) ---\n${summary}\n\n`;
+        } catch (e) {
+          safeError('Summarize failed for top link, falling back to basic scrape', e);
+          const scraped = await scrapeWithScrapling(topLink);
+          if (scraped.status === 'success') {
+            context = `--- KAYNAK: ${scraped.title} (${scraped.url}) ---\n${scraped.content}\n`;
+          }
+        }
       }
 
       // Step 3: Synthesis with LLM
@@ -63,7 +82,7 @@ INSTRUCTIONS:
 - Respond in Turkish.
       `.trim();
 
-      const response = await chat(`Konu: ${query}\n\nLütfen bu konuyu derinlemesine analiz et.`, [], systemPrompt);
+      const response = await chat(`Konu: ${query}\n\nLütfen bu konuyu derinlemesine analiz et.`, [], systemPrompt, [], 'minimax/minimax-m2.5');
 
       return {
         text: `🔬 **Ayça'nın Araştırma Raporu:**\n\n${response.content}`,

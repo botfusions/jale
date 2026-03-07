@@ -1,6 +1,6 @@
 import { Context, Bot } from 'grammy';
 import path from 'path';
-import { chat, LLMMessage, getUserFriendlyError } from '../llm/openrouter';
+import { chat, LLMMessage, LLMContent, getUserFriendlyError } from '../llm/openrouter';
 import { transcribeAudio } from '../transcription/transcriber';
 import { textToSpeech, cleanupTempFile } from '../tts/tts.service';
 import { storeMemory, recallMemories } from '../memory/vector.service';
@@ -336,14 +336,14 @@ export async function handleTextMessage(ctx: Context): Promise<void> {
               const agentEmoji = skill.emoji || '🤖';
               const agentName = skill.displayName.split('(')[1]?.replace(')', '') || skillName.toUpperCase();
               
-              await ctx.reply(`${delegationEmoji} **JALE -> ${agentName}:**\n_"${args.request}"_`, { parse_mode: 'Markdown' });
+              await safeReply(ctx, `${delegationEmoji} **JALE -> ${agentName}:**\n_"${args.request}"_`);
               await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
 
               const res = await skill.execute({ userMessage: args.request, userId });
               toolResult = res.text;
               
               // Notify user that the agent has responded
-              await ctx.reply(`${agentEmoji} **${agentName}:**\n\n${toolResult}`, { parse_mode: 'Markdown' });
+              await safeReply(ctx, `${agentEmoji} **${agentName}:**\n\n${toolResult}`);
               
               safeLog('Tool execution success', {
                 skill: skillName,
@@ -519,6 +519,117 @@ export async function handleVoiceMessage(ctx: Context, bot: Bot): Promise<void> 
     safeError('Voice message handler failed', error);
     const friendlyError = getUserFriendlyError(error);
     await ctx.reply(friendlyError || MESSAGES.TRANSCRIPTION_FAILED);
+  }
+}
+
+// ==========================================
+// PHOTO MESSAGE HANDLER
+// ==========================================
+
+export async function handlePhotoMessage(ctx: Context, bot: Bot): Promise<void> {
+  const photos = ctx.message?.photo;
+  const caption = ctx.message?.caption || '';
+  const userId = ctx.from?.id?.toString() || 'unknown';
+
+  if (!photos || photos.length === 0) return;
+
+  // Rate limit check
+  const rateLimit = rateLimiter.checkLimit(userId);
+  if (!rateLimit.allowed) {
+    await ctx.reply(`⚠️ **Rate Limit!** Lütfen bekleyin.`);
+    return;
+  }
+
+  try {
+    await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
+
+    // Get the highest resolution photo
+    const photo = photos[photos.length - 1];
+    const env = getEnv();
+    const tempDir = path.resolve(process.cwd(), env.TEMP_DIR);
+    const filePath = path.join(tempDir, `photo_${Date.now()}.jpg`);
+
+    await downloadFile(bot, photo.file_id, filePath);
+
+    // Convert to base64 for LLM
+    const imageBuffer = fs.readFileSync(filePath);
+    const base64Image = imageBuffer.toString('base64');
+    cleanupTempFile(filePath);
+
+    const userContent: LLMContent = [
+      { type: 'text', text: caption || 'Bu fotoğrafı analiz et.' },
+      {
+        type: 'image_url',
+        image_url: { url: `data:image/jpeg;base64,${base64Image}` },
+      },
+    ];
+
+    // Process with CEO Agent
+    const history = getHistoryForLLM(userId) as LLMMessage[];
+    const response = await ceoAgent.processRequest(userContent, history);
+
+    addToHistory(userId, 'user', `[Photo] ${caption}`);
+    addToHistory(userId, 'assistant', response.content);
+
+    await safeReply(ctx, `👸 **JALE (CEO):**\n\n${response.content}`);
+  } catch (error) {
+    safeError('Photo handler failed', error);
+    await ctx.reply('❌ Fotoğraf işlenirken bir hata oluştu.');
+  }
+}
+
+// ==========================================
+// DOCUMENT MESSAGE HANDLER
+// ==========================================
+
+export async function handleDocumentMessage(ctx: Context, bot: Bot): Promise<void> {
+  const doc = ctx.message?.document;
+  const caption = ctx.message?.caption || '';
+  const userId = ctx.from?.id?.toString() || 'unknown';
+
+  if (!doc) return;
+
+  // Rate limit check
+  const rateLimit = rateLimiter.checkLimit(userId);
+  if (!rateLimit.allowed) return;
+
+  try {
+    await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
+
+    const env = getEnv();
+    const tempDir = path.resolve(process.cwd(), env.TEMP_DIR);
+    const filePath = path.join(tempDir, doc.file_name || `doc_${Date.now()}`);
+
+    await downloadFile(bot, doc.file_id, filePath);
+
+    let fileContent = '';
+    const extension = path.extname(filePath).toLowerCase();
+
+    if (['.txt', '.md', '.json', '.ts', '.js'].includes(extension)) {
+      fileContent = fs.readFileSync(filePath, 'utf-8');
+    } else if (extension === '.pdf') {
+       // PDF parsing can be complex, for now we just acknowledge it
+       // In a full implementation, we'd use 'pdf-parse'
+       fileContent = `[PDF Dosyası: ${doc.file_name}] (PDF içeriği doğrudan okunamadı, ancak dosya sisteme alındı.)`;
+    } else {
+      fileContent = `[Dosya: ${doc.file_name}, Tip: ${doc.mime_type}]`;
+    }
+
+    cleanupTempFile(filePath);
+
+    const combinedMessage = `Dosya Paylaşıldı: ${doc.file_name}\n\nİçerik/Özet:\n${fileContent}\n\nNot: ${caption}`;
+
+    // Process with CEO Agent
+    const history = getHistoryForLLM(userId) as LLMMessage[];
+    const response = await ceoAgent.processRequest(combinedMessage, history);
+
+    addToHistory(userId, 'user', `[Document: ${doc.file_name}] ${caption}`);
+    addToHistory(userId, 'assistant', response.content);
+
+    await safeReply(ctx, `👸 **JALE (CEO):**\n\n${response.content}`);
+  } catch (error) {
+    safeError('Document handler failed', error);
+    await ctx.reply('❌ Dosya işlenirken bir hata oluştu.');
   }
 }
 

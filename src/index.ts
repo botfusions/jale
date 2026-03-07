@@ -9,6 +9,8 @@ import {
   handleRecall,
   handleTextMessage,
   handleVoiceMessage,
+  handlePhotoMessage,
+  handleDocumentMessage,
   handleJaleCommand,
   handleOsmanCommand,
   handleResearchCommand,
@@ -148,6 +150,14 @@ async function main(): Promise<void> {
   // Voice message handler
   bot.on('message:voice', async (ctx) => {
     await handleVoiceMessage(ctx, bot);
+  });
+
+  bot.on('message:photo', async (ctx) => {
+    await handlePhotoMessage(ctx, bot);
+  });
+
+  bot.on('message:document', async (ctx) => {
+    await handleDocumentMessage(ctx, bot);
   });
 
   // Text message handler (catch-all, must be last)

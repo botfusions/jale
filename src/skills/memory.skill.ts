@@ -42,7 +42,7 @@ export const memorySkill: Skill = {
       // Bilgi hatırlama/sorgulama
       const memories = await recallMemories(userMessage, 3);
       if (memories.length > 0) {
-        const memoryText = memories.map(m => `- ${m.text}`).join('\n');
+        const memoryText = memories.map(m => `• ${m.text}`).join('\n');
         return {
           text: `🧠 **Hatırladıklarım:**\n\n${memoryText}`,
           voiceText: 'İlgili bilgileri hatırladım.',

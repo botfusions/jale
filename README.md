@@ -1,6 +1,8 @@
 # 👸 Jale AI — Akıllı Ekosistem ve Swarm Asistanı
 
-> Jale AI, sıradan bir Telegram botundan fazlasıdır. Jale (CEO) liderliğinde; finans (KAYA), araştırma (AYÇA), hukuk (AVUKAT KEMAL) ve yazılım (RECEP) uzmanlarından oluşan **Visible Swarm** mimarisi ile fiziksel ve dijital ekosisteminizi yönetir.
+> **Adres:** [asistan.turklawai.com](https://asistan.turklawai.com)
+
+> Jale AI, sıradan bir Telegram botundan fazlasıdır. Jale (CEO) liderliğinde; finans (KAYA), araştırma (AYÇA), hukuk (AVUKAT KEMAL) ve yazılım (MEHMET) uzmanlarından oluşan **Visible Swarm** mimarisi ile fiziksel ve dijital ekosisteminizi yönetir.
 
 ---
 

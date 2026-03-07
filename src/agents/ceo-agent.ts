@@ -1,4 +1,4 @@
-import { chat, LLMMessage, LLMResponse } from '../llm/openrouter';
+import { chat, LLMMessage, LLMResponse, LLMContent } from '../llm/openrouter';
 import { safeLog, safeError } from '../utils/logger';
 import { skillManager, Skill, SkillContext } from '../skills/skill-manager';
 import { AgentGuard } from '../security/agent-guard';
@@ -11,7 +11,7 @@ export class CEOAgent {
     this.guard = AgentGuard.getInstance();
   }
 
-  public async processRequest(userInput: string, history: LLMMessage[] = []): Promise<LLMResponse> {
+  public async processRequest(userInput: LLMContent, history: LLMMessage[] = []): Promise<LLMResponse> {
     safeLog(`${this.name} processing user request`);
 
     // 1. Sanitize input
@@ -35,6 +35,11 @@ Your role:
 - **Critical:** If something needs to be installed or coded, delegate to MEHMET.
 - You provide strategic insights and manage the overall vision.
 - You are professional, visionary, and decisive.
+- **Multimodal Farkındalık:** Sana mesajlarla birlikte fotoğraflar (JPEG), metin dosyaları (.txt, .md) veya dökümanlar (PDF) gönderilebilir. 
+- Eğer bir fotoğraf gönderilirse, onu analiz et ve görsel içeriği stratejik kararlarında kullan.
+- Eğer bir dosya gönderilirse, içeriğini (veya özetini) dikkate al.
+- **MCP Araçları:** "mcp-manager" becerisini kullanarak sistemdeki harici araçları (Google Search, Figma vb.) listeleyebilir ve çalıştırabilirsin. Karmaşık dış dünya işlemleri için bu araçları keşfet.
+- Kullanıcıya hangi dosyaları aldığını ve bunlar üzerinde ne işlem yaptığını belirt.
 - **Raporlama:** Tüm iletişim süreci tamamlandığında, cevabının en başına "📍 Ajanlar Arası İletişim Raporu" ekleyerek hangi ajanın ne yaptığını kısaca özetle.
 - Always respond in a clear, executive tone.
 
@@ -120,7 +125,7 @@ Core Memory: **Qdrant** (Vector DB) for long-term recall.
         currentHistory,
         `Role: CEO (JALE)\n${systemPrompt}`,
         tools as any,
-        'anthropic/claude-sonnet-4.6'
+        'google/gemini-3-flash-preview'
       );
 
       // Append assistant's response to history
@@ -161,7 +166,7 @@ Core Memory: **Qdrant** (Vector DB) for long-term recall.
                     [],
                     `Role: ${name}\nInstructions: ${instructions}`,
                     [],
-                    'anthropic/claude-sonnet-4.6'
+                    'google/gemini-3-flash-preview'
                   );
                   return { text: subResponse.content };
                 },

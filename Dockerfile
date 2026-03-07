@@ -26,8 +26,8 @@ FROM node:22-slim
 
 WORKDIR /app
 
-# PM2 ve pnpm kurulumu
-RUN npm install -g pm2 pnpm
+# PM2, pnpm ve Claude Code kurulumu
+RUN npm install -g pm2 pnpm @anthropic-ai/claude-code
 
 # Builder stage'den sadece derlenmiş dosyaları ve modülleri al
 COPY --from=builder /app/dist ./dist

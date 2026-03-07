@@ -47,13 +47,31 @@ export class AgentGuard {
   /**
    * Specifically for prompt injection cleaning (basic version)
    */
-  public sanitizeInput(input: string): string {
+  public sanitizeInput(input: string | any[]): any {
     const dangerousPatterns = [
       /ignore previous instructions/gi,
       /you are now an? admin/gi,
       /system override/gi,
       /delete all files/gi,
     ];
+
+    if (Array.isArray(input)) {
+      return input.map((item) => {
+        if (item.type === 'text' && typeof item.text === 'string') {
+          let sanitized = item.text;
+          for (const pattern of dangerousPatterns) {
+            if (pattern.test(sanitized)) {
+              safeLog('POTENTIAL PROMPT INJECTION DETECTED in multimodal content', {
+                pattern: pattern.toString(),
+              });
+              sanitized = sanitized.replace(pattern, '[REDACTED]');
+            }
+          }
+          return { ...item, text: sanitized };
+        }
+        return item;
+      });
+    }
 
     let sanitized = input;
     for (const pattern of dangerousPatterns) {

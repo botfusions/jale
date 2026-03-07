@@ -18,6 +18,7 @@ import { borsaSkill } from './borsa.skill';
 import { softwareSkill } from './software.skill';
 import { yargiSkill } from './yargi.skill';
 import { memorySkill } from './memory.skill';
+import { mcpManagerSkill } from './mcp-manager.skill';
 
 export function registerAllSkills(): void {
   skillManager.register(webSearchSkill);
@@ -30,6 +31,7 @@ export function registerAllSkills(): void {
   skillManager.register(softwareSkill);
   skillManager.register(yargiSkill);
   skillManager.register(memorySkill);
+  skillManager.register(mcpManagerSkill);
 }
 
 export { skillManager } from './skill-manager';

@@ -4,9 +4,24 @@ import { safeLog, safeError } from '../utils/logger';
 import { withRetry, getUserFriendlyError } from '../utils/retry';
 import { loadSoulPrompt } from '../memory/core.memory';
 
+export type LLMContent = string | (LLMTextContent | LLMImageContent)[];
+
+export interface LLMTextContent {
+  type: 'text';
+  text: string;
+}
+
+export interface LLMImageContent {
+  type: 'image_url';
+  image_url: {
+    url: string;
+    detail?: 'low' | 'high' | 'auto';
+  };
+}
+
 export interface LLMMessage {
   role: 'system' | 'user' | 'assistant' | 'tool';
-  content: string | null;
+  content: LLMContent | null;
   name?: string;
   tool_calls?: any[];
   tool_call_id?: string;
@@ -50,7 +65,7 @@ export function resetClient(): void {
 }
 
 export async function chat(
-  userMessage: string | null,
+  userMessage: LLMContent | null,
   conversationHistory: LLMMessage[] = [],
   memoryContext: string = '',
   tools?: any[],

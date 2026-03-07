@@ -9,6 +9,7 @@ services:
       - ./memory:/app/memory
       - ./research:/app/research
       - ./downloads:/app/downloads
+      - anthropic_config:/root/.anthropic
     depends_on:
       - redis
     networks:
@@ -55,3 +56,4 @@ networks:
 volumes:
   redis_data:
   n8n_data:
+  anthropic_config:
