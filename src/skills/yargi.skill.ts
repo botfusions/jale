@@ -1,5 +1,6 @@
 import { Skill, SkillContext, SkillResult } from './skill-manager';
 import { safeLog, safeError } from '../utils/logger';
+import { MODELS } from '../config/constants';
 import { chat } from '../llm/openrouter';
 import { spawnCommand } from '../utils/shell';
 import TurndownService from 'turndown';
@@ -90,7 +91,7 @@ Always summarize findings in Turkish. Professional and formal legal tone.
             },
           },
         ],
-        'anthropic/claude-sonnet-4.6'
+        MODELS.FLASH
       );
 
       if (response.tool_calls && response.tool_calls.length > 0) {
@@ -112,7 +113,7 @@ Always summarize findings in Turkish. Professional and formal legal tone.
             [],
             `Role: Legal Specialist (AVUKAT KEMAL)\nYou are summarizing the search results from the legal database for the user.`,
             [],
-            'anthropic/claude-sonnet-4.6'
+            MODELS.FLASH
           );
 
           return {
@@ -133,7 +134,7 @@ Always summarize findings in Turkish. Professional and formal legal tone.
             [],
             `Role: Legal Specialist (AVUKAT KEMAL)\nYou are summarizing the search results from the legal database for the user.`,
             [],
-            'anthropic/claude-sonnet-4.6'
+            MODELS.FLASH
           );
 
           return {

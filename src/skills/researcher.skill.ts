@@ -1,5 +1,6 @@
 import { Skill, SkillContext, SkillResult } from './skill-manager';
 import { safeLog, safeError } from '../utils/logger';
+import { MODELS } from '../config/constants';
 import { chat } from '../llm/openrouter';
 import { searchBrave, BraveSearchResult } from '../utils/brave-search';
 import { scrapeWithScrapling } from '../utils/scraper';
@@ -37,8 +38,8 @@ export const researcherSkill: Skill = {
       if (isDirectUrl) {
         safeLog('Ayça detected a direct URL, using summarize utility');
         const { summarizeContent } = await import('../utils/summarize');
-        const summary = await summarizeContent(query, { model: 'minimax/minimax-m2.5' });
-        
+        const summary = await summarizeContent(query, { model: MODELS.FLASH });
+
         return {
           text: `🔬 **Ayça'nın Hızlı Özet Raporu:**\n\n${summary}`,
           voiceText: 'Verdiğiniz bağlantıyı saniyeler içinde analiz edip özetledim.',
@@ -51,12 +52,15 @@ export const researcherSkill: Skill = {
 
       if (searchResults.length > 0) {
         safeLog('Ayça found search results, preparing to scrape and summarize top links');
-        
+
         // Step 2: Use summarize on the top result for high-quality context
         const topLink = searchResults[0].url;
         try {
           const { summarizeContent } = await import('../utils/summarize');
-          const summary = await summarizeContent(topLink, { length: 'medium', model: 'minimax/minimax-m2.5' });
+          const summary = await summarizeContent(topLink, {
+            length: 'medium',
+            model: MODELS.FLASH,
+          });
           context = `--- ANA KAYNAK ÖZETİ (${topLink}) ---\n${summary}\n\n`;
         } catch (e) {
           safeError('Summarize failed for top link, falling back to basic scrape', e);
@@ -82,7 +86,13 @@ INSTRUCTIONS:
 - Respond in Turkish.
       `.trim();
 
-      const response = await chat(`Konu: ${query}\n\nLütfen bu konuyu derinlemesine analiz et.`, [], systemPrompt, [], 'minimax/minimax-m2.5');
+      const response = await chat(
+        `Konu: ${query}\n\nLütfen bu konuyu derinlemesine analiz et.`,
+        [],
+        systemPrompt,
+        [],
+        MODELS.FLASH
+      );
 
       return {
         text: `🔬 **Ayça'nın Araştırma Raporu:**\n\n${response.content}`,

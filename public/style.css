@@ -27,12 +27,16 @@
 }
 
 body {
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Outfit',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-primary);
   height: 100vh;
   overflow: hidden;
-  background-image: 
+  background-image:
     radial-gradient(circle at 0% 0%, rgba(138, 43, 226, 0.1), transparent 30%),
     radial-gradient(circle at 100% 100%, rgba(255, 0, 127, 0.05), transparent 30%);
 }
@@ -160,8 +164,14 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tab-header {
@@ -206,12 +216,22 @@ body {
 }
 
 @keyframes messageIn {
-  from { opacity: 0; transform: scale(0.95) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
-.agent-message { align-self: flex-start; }
-.user-message { align-self: flex-end; }
+.agent-message {
+  align-self: flex-start;
+}
+.user-message {
+  align-self: flex-end;
+}
 
 .message-content {
   padding: 16px 20px;
@@ -247,15 +267,26 @@ body {
   animation: typing 1s infinite ease-in-out;
 }
 
-.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes typing {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
 }
 
-.hidden { display: none; }
+@keyframes typing {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.hidden {
+  display: none;
+}
 
 /* Input Area */
 .chat-input-area {
@@ -287,7 +318,9 @@ body {
   font-size: 1rem;
 }
 
-.input-form input:focus { outline: none; }
+.input-form input:focus {
+  outline: none;
+}
 
 .send-btn {
   width: 44px;
@@ -331,8 +364,12 @@ body {
   margin-bottom: 16px;
 }
 
-.tool-emoji { font-size: 1.5rem; }
-.tool-name { font-weight: 700; }
+.tool-emoji {
+  font-size: 1.5rem;
+}
+.tool-name {
+  font-weight: 700;
+}
 
 .tool-desc {
   color: var(--text-secondary);
@@ -390,10 +427,23 @@ body {
   color: white;
 }
 
-.agent-details { flex: 1; }
-.agent-name { font-size: 1.2rem; font-weight: 700; }
-.agent-role { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px; }
-.agent-meta { display: flex; align-items: center; gap: 12px; }
+.agent-details {
+  flex: 1;
+}
+.agent-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.agent-role {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.agent-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
 .agent-status {
   font-size: 0.8rem;
@@ -407,13 +457,21 @@ body {
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar {
+  width: 6px;
+}
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
 @media (max-width: 900px) {
-  .sidebar { width: 80px; }
-  .logo span, .nav-item span, .theme-toggle span { display: none; }
+  .sidebar {
+    width: 80px;
+  }
+  .logo span,
+  .nav-item span,
+  .theme-toggle span {
+    display: none;
+  }
 }

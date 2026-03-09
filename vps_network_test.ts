@@ -12,7 +12,7 @@ async function testUrl(label: string, url: string) {
   try {
     const start = Date.now();
     const res = await fetch(`${url}/healthz`, {
-      signal: AbortSignal.timeout(3000)
+      signal: AbortSignal.timeout(3000),
     });
     const duration = Date.now() - start;
     console.log(`Status: ${res.status} (${duration}ms)`);
@@ -25,10 +25,10 @@ async function testUrl(label: string, url: string) {
 
 async function run() {
   console.log('=== Qdrant VPS Internal/External Network Test ===');
-  
+
   await testUrl('External URL', EXTERNAL_URL);
   await testUrl('Internal Docker URL', INTERNAL_URL);
-  
+
   console.log('\n--- Collection List Attempt ---');
   // We try listing collections on both if reachable
   const urlsToTry = [EXTERNAL_URL, INTERNAL_URL];
@@ -36,7 +36,7 @@ async function run() {
     try {
       const res = await fetch(`${url}/collections`, {
         headers: { 'api-key': QDRANT_API_KEY || '' },
-        signal: AbortSignal.timeout(3000)
+        signal: AbortSignal.timeout(3000),
       });
       console.log(`Auth test on ${url}: Status ${res.status}`);
       if (res.ok) {

@@ -1,8 +1,12 @@
 export const APP_NAME = 'Jale AI';
 export const APP_VERSION = '1.1.0';
 export const APP_EMOJI = '👸';
+export const MODELS = {
+  JALE: 'google/gemini-3.1-pro-preview-customtools',
+  FLASH: 'google/gemini-3-flash-preview',
+  PROGRAMMER: 'minimax/minimax-01-2.5-pro',
+} as const;
 
-export const MAX_CONTEXT_TOKENS = 4096;
 export const MAX_MEMORY_RESULTS = 5;
 export const MAX_CALENDAR_EVENTS = 5;
 

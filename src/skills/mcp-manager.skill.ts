@@ -14,13 +14,18 @@ export const mcpManagerSkill: Skill = {
       const input = ctx.userMessage.toLowerCase().trim();
 
       // Case 1: List all tools
-      if (input.includes('liste') || input.includes('list') || input === 'mcp' || input === 'araçlar') {
+      if (
+        input.includes('liste') ||
+        input.includes('list') ||
+        input === 'mcp' ||
+        input === 'araçlar'
+      ) {
         const allTools = await listAllMcpTools();
-        
+
         if (allTools.length === 0) {
           return {
             text: '🧳 Şu an bağlı herhangi bir MCP aracı bulunamadı.',
-            voiceText: 'Bağlı bir araç bulamadım.'
+            voiceText: 'Bağlı bir araç bulamadım.',
           };
         }
 
@@ -41,7 +46,7 @@ export const mcpManagerSkill: Skill = {
 
         return {
           text: response,
-          voiceText: `${allTools.length} adet araç kullanıma hazır.`
+          voiceText: `${allTools.length} adet araç kullanıma hazır.`,
         };
       }
 
@@ -49,14 +54,13 @@ export const mcpManagerSkill: Skill = {
       // For now, providing a status message for manual/agent debugging
       return {
         text: '🧳 MCP katmanı aktif. Araçları listelemek için "mcp list" diyebilirsiniz.\n\nAjanlar bu katmanı arka planda araç çalıştırmak için kullanabilir.',
-        voiceText: 'MCP katmanı çalışıyor.'
+        voiceText: 'MCP katmanı çalışıyor.',
       };
-
     } catch (error: any) {
       safeError('MCP Manager Skill Error', error);
       return {
         text: `⚠️ MCP İşlemi başarısız: ${error.message}`,
-        voiceText: 'MCP işlemi sırasında bir hata oluştu.'
+        voiceText: 'MCP işlemi sırasında bir hata oluştu.',
       };
     }
   },

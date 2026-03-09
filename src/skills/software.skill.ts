@@ -1,5 +1,6 @@
 import { Skill, SkillContext, SkillResult } from './skill-manager';
 import { safeLog, safeError } from '../utils/logger';
+import { MODELS } from '../config/constants';
 import { chat } from '../llm/openrouter';
 import { spawnCommand } from '../utils/shell';
 
@@ -56,7 +57,11 @@ Guidelines:
                 type: 'object',
                 properties: {
                   command: { type: 'string', description: 'The base command' },
-                  args: { type: 'array', items: { type: 'string' }, description: 'Command arguments' },
+                  args: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'Command arguments',
+                  },
                 },
                 required: ['command', 'args'],
               },
@@ -66,7 +71,8 @@ Guidelines:
             type: 'function',
             function: {
               name: 'opencode_task',
-              description: 'Run a complex multi-step coding task using OpenCode AI CLI (autonomous agent).',
+              description:
+                'Run a complex multi-step coding task using OpenCode AI CLI (autonomous agent).',
               parameters: {
                 type: 'object',
                 properties: {
@@ -77,13 +83,13 @@ Guidelines:
             },
           },
         ],
-        'z-ai/glm-5'
+        MODELS.PROGRAMMER
       );
 
       // Handle tool calls
       if (response.tool_calls && response.tool_calls.length > 0) {
         const call = response.tool_calls[0];
-        
+
         if (call.function.name === 'terminal_execute') {
           const args = JSON.parse(call.function.arguments);
           safeLog('Executing Terminal Command', { args });
@@ -94,7 +100,7 @@ Guidelines:
             [],
             `Role: Software Specialist (MEHMET)\nSummarize the result of the terminal command and explain the next steps to the user.`,
             [],
-            'z-ai/glm-5'
+            MODELS.PROGRAMMER
           );
 
           return {
@@ -107,7 +113,7 @@ Guidelines:
         if (call.function.name === 'opencode_task') {
           const args = JSON.parse(call.function.arguments);
           safeLog('Executing OpenCode Task', { task: args.task });
-          
+
           // Use opencode in non-interactive mode
           const result = await spawnCommand('opencode', [args.task]);
 
@@ -116,7 +122,7 @@ Guidelines:
             [],
             `Role: Software Specialist (MEHMET)\nExplain the outcome of the OpenCode autonomous task to the user.`,
             [],
-            'z-ai/glm-5'
+            MODELS.PROGRAMMER
           );
 
           return {

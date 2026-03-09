@@ -26,7 +26,6 @@ async function runGoogleCalendarQuery(): Promise<any[]> {
   return [];
 }
 
-
 export async function getTodayEvents(): Promise<CalendarEvent[]> {
   try {
     safeLog('Fetching today events via Google API (Placeholder)');

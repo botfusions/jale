@@ -1,5 +1,6 @@
 import { spawnCommand } from './shell';
 import { safeLog, safeError } from './logger';
+import { MODELS } from '../config/constants';
 
 /**
  * Summarize Utility
@@ -15,18 +16,16 @@ export interface SummarizeOptions {
 /**
  * Summarizes a URL or File Path using the summarize CLI.
  */
-export async function summarizeContent(target: string, options: SummarizeOptions = {}): Promise<string> {
-  const { length = 'medium', model = 'anthropic/claude-sonnet-4.6', format = 'markdown' } = options;
-  
+export async function summarizeContent(
+  target: string,
+  options: SummarizeOptions = {}
+): Promise<string> {
+  const { length = 'medium', model = MODELS.FLASH, format = 'markdown' } = options;
+
   safeLog(`[Summarize Utility] Summarizing: ${target}`, { length, model });
 
   try {
-    const args = [
-      target,
-      '--length', length,
-      '--model', model,
-      '--format', format
-    ];
+    const args = [target, '--length', length, '--model', model, '--format', format];
 
     // Using spawnCommand with npx to ensure summarize is available
     const result = await spawnCommand('npx', ['summarize', ...args]);

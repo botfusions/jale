@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { webhookCallback } from 'grammy';
 import path from 'path';
 import { createBot } from './telegram/bot';
 import {
@@ -30,6 +31,7 @@ import {
   addToHistory,
 } from './memory/conversation-store';
 import { CEOAgent } from './agents/ceo-agent';
+import { stateManager } from './utils/state-manager';
 
 const HTTP_PORT = process.env.HTTP_PORT || 3000;
 
@@ -93,6 +95,11 @@ async function main(): Promise<void> {
   // Vapi webhook endpoint
   app.post('/webhook/vapi', handleVapiWebhook);
 
+  // System Status API
+  app.get('/api/system-status', (_req: Request, res: Response) => {
+    res.json(stateManager.getSystemStatus());
+  });
+
   // Web UI Chat endpoint
   app.post('/api/chat', async (req: Request, res: Response): Promise<void> => {
     try {
@@ -130,6 +137,13 @@ async function main(): Promise<void> {
 
   // Create bot
   const bot = createBot();
+
+  // Telegram Webhook Support
+  if (env.TELEGRAM_WEBHOOK_URL) {
+    const webhookPath = `/webhook/telegram/${env.TELEGRAM_BOT_TOKEN}`;
+    app.use(webhookPath, webhookCallback(bot, 'express'));
+    safeLog('Telegram Webhook enabled', { path: webhookPath });
+  }
 
   // Register core command handlers
   bot.command(COMMANDS.START, handleStart);
@@ -181,21 +195,35 @@ async function main(): Promise<void> {
 
   // Start bot
   console.log('🚀 Jale AI başlatılıyor...');
-  bot
-    .start({
-      onStart: () => {
-        console.log(`✅ ${APP_NAME} aktif ve hazır!`);
-        console.log("📱 Telegram'da bot'a mesaj gönderebilirsiniz.");
-        console.log("📞 Vapi webhook'u dinleniyor.");
-      },
-    })
-    .catch((err) => {
-      console.error(
-        '⚠️ Telegram bot başlatılamadı (Başka bir instance çalışıyor olabilir):',
-        err.message
+
+  if (env.TELEGRAM_WEBHOOK_URL) {
+    // Webhook mode
+    try {
+      await bot.api.setWebhook(
+        `${env.TELEGRAM_WEBHOOK_URL}/webhook/telegram/${env.TELEGRAM_BOT_TOKEN}`
       );
-      console.log('🌐 Web UI (Express) çalışmaya devam ediyor...');
-    });
+      console.log('✅ Telegram Webhook ayarlandı.');
+    } catch (err: any) {
+      safeError('Telegram Webhook setup failed', err);
+    }
+  } else {
+    // Long polling mode
+    bot
+      .start({
+        onStart: () => {
+          console.log(`✅ ${APP_NAME} aktif ve hazır!`);
+          console.log("📱 Telegram'da bot'a mesaj gönderebilirsiniz.");
+          console.log("📞 Vapi webhook'u dinleniyor.");
+        },
+      })
+      .catch((err) => {
+        console.error(
+          '⚠️ Telegram bot başlatılamadı (Başka bir instance çalışıyor olabilir):',
+          err.message
+        );
+        console.log('🌐 Web UI (Express) çalışmaya devam ediyor...');
+      });
+  }
 }
 
 // Graceful shutdown

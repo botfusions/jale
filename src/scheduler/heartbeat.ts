@@ -96,14 +96,6 @@ export function startHeartbeat(bot: Bot): void {
   });
 }
 
-export function stopHeartbeat(): void {
-  if (scheduledTask) {
-    scheduledTask.stop();
-    scheduledTask = null;
-    safeLog('Heartbeat scheduler stopped');
-  }
-}
-
 export async function sendHeartbeatNow(bot: Bot): Promise<void> {
   const env = getEnv();
   const userIds = env.TELEGRAM_ALLOWLIST_USER_ID.split(',').map((id) => id.trim());

@@ -12,7 +12,7 @@ export const memorySkill: Skill = {
   execute: async (ctx: SkillContext): Promise<SkillResult> => {
     try {
       const { userMessage, userId } = ctx;
-      
+
       // Resim hatırlama kontrolü
       if (userMessage.toLowerCase().includes('resim') && ctx.data?.imageUrl) {
         const memoryId = await storeImageMemory(ctx.data.imageUrl, userId);
@@ -23,13 +23,16 @@ export const memorySkill: Skill = {
       }
 
       // Bilgi kaydetme kontrolü ("... kaydet", "... hafızaya al")
-      if (userMessage.toLowerCase().includes('kaydet') || userMessage.toLowerCase().includes('hafızaya al')) {
+      if (
+        userMessage.toLowerCase().includes('kaydet') ||
+        userMessage.toLowerCase().includes('hafızaya al')
+      ) {
         const cleanText = userMessage
           .replace(/kaydet/gi, '')
           .replace(/hafızaya al/gi, '')
           .replace(/lütfen/gi, '')
           .trim();
-        
+
         if (cleanText.length > 5) {
           const memoryId = await storeMemory(cleanText, userId);
           return {
@@ -42,7 +45,7 @@ export const memorySkill: Skill = {
       // Bilgi hatırlama/sorgulama
       const memories = await recallMemories(userMessage, userId, 3);
       if (memories.length > 0) {
-        const memoryText = memories.map(m => `• ${m.text}`).join('\n');
+        const memoryText = memories.map((m) => `• ${m.text}`).join('\n');
         return {
           text: `🧠 **RECEP Hatırlıyor:**\n\n${memoryText}`,
           voiceText: 'İlgili bilgileri hatırladım.',

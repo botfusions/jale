@@ -79,7 +79,11 @@ async function checkEnvVars(): Promise<HealthCheck> {
     if (!env.MODEL_API_KEY) missing.push('MODEL_API_KEY');
 
     if (missing.length > 0) {
-      return { name: '🔑 Env Vars', status: 'fail', message: `Kritik eksik: ${missing.join(', ')}` };
+      return {
+        name: '🔑 Env Vars',
+        status: 'fail',
+        message: `Kritik eksik: ${missing.join(', ')}`,
+      };
     }
 
     // Opsiyonel ama önemli değişkenler
@@ -242,28 +246,28 @@ async function checkMemory(): Promise<HealthCheck> {
 
   try {
     // Ham HTTP health check
-    const baseUrl = env.QDRANT_URL.replace(/\/$/, "");
+    const baseUrl = env.QDRANT_URL.replace(/\/$/, '');
     const response = await fetch(`${baseUrl}/healthz`, {
       signal: AbortSignal.timeout(5000),
     });
 
     if (response.ok) {
-      return { 
-        name: '🧠 Hafıza', 
-        status: 'ok', 
-        message: `Qdrant aktif (${env.QDRANT_COLLECTION})` 
+      return {
+        name: '🧠 Hafıza',
+        status: 'ok',
+        message: `Qdrant aktif (${env.QDRANT_COLLECTION})`,
       };
     }
-    return { 
-      name: '🧠 Hafıza', 
-      status: 'fail', 
-      message: `Qdrant VPS hatası: HTTP ${response.status}` 
+    return {
+      name: '🧠 Hafıza',
+      status: 'fail',
+      message: `Qdrant VPS hatası: HTTP ${response.status}`,
     };
   } catch (error: any) {
-    return { 
-      name: '🧠 Hafıza', 
-      status: 'fail', 
-      message: `Bağlantı hatası: ${error.message?.substring(0, 50)}` 
+    return {
+      name: '🧠 Hafıza',
+      status: 'fail',
+      message: `Bağlantı hatası: ${error.message?.substring(0, 50)}`,
     };
   }
 }
@@ -319,7 +323,7 @@ async function checkSummarize(): Promise<HealthCheck> {
     if (fs.existsSync(summarizePath)) {
       return { name: '📝 Summarize', status: 'ok', message: 'Yerel build aktif' };
     }
-    
+
     const { exec } = await import('child_process');
     const { promisify } = await import('util');
     const execAsync = promisify(exec);
@@ -338,21 +342,21 @@ async function checkGoogleCli(): Promise<HealthCheck> {
     const { exec } = await import('child_process');
     const { promisify } = await import('util');
     const execAsync = promisify(exec);
-    
+
     // Check if clasp is installed
     const { stdout } = await execAsync('npx clasp --version', { timeout: 10000 });
     const version = stdout.trim();
-    
-    return { 
-      name: '🌐 Google CLI', 
-      status: 'ok', 
-      message: `clasp v${version} aktif` 
+
+    return {
+      name: '🌐 Google CLI',
+      status: 'ok',
+      message: `clasp v${version} aktif`,
     };
   } catch (error: any) {
-    return { 
-      name: '🌐 Google CLI', 
-      status: 'warn', 
-      message: 'clasp kurulu değil veya erişilemiyor' 
+    return {
+      name: '🌐 Google CLI',
+      status: 'warn',
+      message: 'clasp kurulu değil veya erişilemiyor',
     };
   }
 }

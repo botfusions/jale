@@ -14,77 +14,84 @@ const toolsGrid = document.getElementById('tools-grid');
 const agentsList = document.getElementById('agents-list');
 
 let isWaitingForResponse = false;
-
-// Tool Data
-const toolEnvanteri = [
-  { name: 'Yazılım Uzmanı (MEHMET)', emoji: '💻', desc: 'Sistem kabuğunda komut çalıştırma, otonom yazılım projeleri ve git yönetimi.', tags: ['GLM-5', 'Terminal', 'Claude CLI'] },
-  { name: 'Araştırmacı (AYÇA)', emoji: '🔍', desc: 'Brave Search üzerinden güncel bilgi toplama ve web kazıma.', tags: ['MiniMax 2.5', 'Brave', 'Scrapling'] },
-  { name: 'Hukuk Uzmanı (KEMAL)', emoji: '⚖️', desc: 'Türk hukuk mevzuatları ve mahkeme kararları veritabanı araması.', tags: ['Gemini 3', 'Yargı-CLI'] },
-  { name: 'Hafıza Uzmanı (RECEP)', emoji: '🧠', desc: 'Bilgi ve görselleri Qdrant vektör hafızasına kalıcı olarak kaydeder.', tags: ['Gemini 3', 'Vektör DB'] },
-  { name: 'Hızlı Özetleyici', emoji: '📝', desc: 'Yüksek performanslı metin ve dosya özetleme altyapısı.', tags: ['@steipete/summarize'] }
-];
-
-// Agent Data
-const ajanlar = [
-  { id: 'jale', name: 'JALE', role: 'Orkestratör', model: 'Gemini 3 Flash', status: 'Aktif', avatar: 'J' },
-  { id: 'mehmet', name: 'MEHMET', role: 'Yazılım Geliştirici', model: 'GLM-5', status: 'Beklemede', avatar: 'M' },
-  { id: 'ayca', name: 'AYÇA', role: 'Araştırmacı', model: 'MiniMax 2.5', status: 'Beklemede', avatar: 'A' },
-  { id: 'kemal', name: 'KEMAL', role: 'Hukuk Danışmanı', model: 'Gemini 3', status: 'Aktif', avatar: 'K' }
-];
+let systemStatus = { agents: [], skills: [] };
 
 // Initialize Dashboard
 function init() {
-  renderTools();
-  renderAgents();
+  fetchSystemStatus();
   setupTabs();
   setupTheme();
+
+  // Polling for updates every 10 seconds
+  setInterval(fetchSystemStatus, 10000);
 }
 
-function renderTools() {
-  if (!toolsGrid) return;
-  toolsGrid.innerHTML = toolEnvanteri.map(tool => `
+function renderTools(skills) {
+  if (!toolsGrid || !skills) return;
+  toolsGrid.innerHTML = skills
+    .map(
+      (tool) => `
     <div class="tool-card">
       <div class="tool-header">
-        <span class="tool-emoji">${tool.emoji}</span>
-        <span class="tool-name">${tool.name}</span>
+        <span class="tool-emoji">${tool.emoji || '🔧'}</span>
+        <span class="tool-name">${tool.displayName}</span>
       </div>
-      <p class="tool-desc">${tool.desc}</p>
+      <p class="tool-desc">Yetenek durumu: ${tool.enabled ? 'Aktif' : 'Pasif'}</p>
       <div class="tool-tags">
-        ${tool.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+        <span class="tag ${tool.enabled ? 'online' : ''}">${tool.enabled ? 'Aktif' : 'Devre Dışı'}</span>
       </div>
     </div>
-  `).join('');
+  `
+    )
+    .join('');
 }
 
-function renderAgents() {
-  if (!agentsList) return;
+function renderAgents(agents) {
+  if (!agentsList || !agents) return;
   agentsList.innerHTML = `
     <div class="swarm-overview">
-      ${ajanlar.map(agent => `
+      ${agents
+        .map(
+          (agent) => `
         <div class="agent-card">
-          <div class="agent-avatar">${agent.avatar}</div>
+          <div class="agent-avatar">${agent.name[0]}</div>
           <div class="agent-details">
             <h3 class="agent-name">${agent.name}</h3>
-            <p class="agent-role">${agent.role}</p>
+            <p class="agent-role">${agent.description || 'Sistem Ajanı'}</p>
             <div class="agent-meta">
-              <span class="agent-model tag">${agent.model}</span>
+              <span class="agent-model tag">${agent.lastActivity || 'Beklemede...'}</span>
               <span class="agent-status ${agent.status === 'Aktif' ? 'online' : ''}">${agent.status}</span>
             </div>
           </div>
         </div>
-      `).join('')}
+      `
+        )
+        .join('')}
     </div>
   `;
 }
 
+async function fetchSystemStatus() {
+  try {
+    const response = await fetch('/api/system-status');
+    if (!response.ok) throw new Error('API hatası');
+    const data = await response.json();
+    systemStatus = data;
+    renderTools(data.skills);
+    renderAgents(data.agents);
+  } catch (error) {
+    console.error('Sistem durumu alınamadı:', error);
+  }
+}
+
 function setupTabs() {
-  navItems.forEach(item => {
+  navItems.forEach((item) => {
     item.addEventListener('click', () => {
       const tabId = item.getAttribute('data-tab');
-      
-      navItems.forEach(n => n.classList.remove('active'));
-      tabPanes.forEach(p => p.classList.remove('active'));
-      
+
+      navItems.forEach((n) => n.classList.remove('active'));
+      tabPanes.forEach((p) => p.classList.remove('active'));
+
       item.classList.add('active');
       document.getElementById(tabId).classList.add('active');
     });

@@ -1,4 +1,5 @@
 import { chat, LLMMessage, LLMResponse } from '../llm/openrouter';
+import { MODELS } from '../config/constants';
 import { safeLog, safeError } from '../utils/logger';
 import { spawn } from 'child_process';
 import * as path from 'path';
@@ -54,7 +55,7 @@ export class BorsaciAgent {
   }
 
   public async analyzeMarket(query: string, history: LLMMessage[] = []): Promise<LLMResponse> {
-    safeLog(`${this.name} analyzing market request with model moonshotai/kimi-k2.5`);
+    safeLog(`${this.name} analyzing market request with model ${MODELS.FLASH}`);
 
     const systemPrompt = `
 You are KAYA, the Specialist Financial Analyst and Trader (Borsacı) of the Agent Swarm.
@@ -63,7 +64,7 @@ Your primary role is to analyze stock markets, perform crypto analysis, and gene
 - You have access to a specific financial tool (Borsaci MCP system). 
 - Use the tool to request raw data or preliminary analysis, then synthesize it professionally for the CEO or User.
 - Speak in a professional, confident, and analytical tone.
-- Your designated LLM is 'moonshotai/kimi-k2.5'.
+- Your designated LLM is '${MODELS.FLASH}'.
     `.trim();
 
     const tools = [
@@ -94,7 +95,7 @@ Your primary role is to analyze stock markets, perform crypto analysis, and gene
       history,
       `Role: Financial Analyst (KAYA)\n${systemPrompt}`,
       tools,
-      'moonshotai/kimi-k2.5'
+      MODELS.FLASH
     );
 
     if (response.tool_calls && response.tool_calls.length > 0) {
@@ -132,7 +133,7 @@ Your primary role is to analyze stock markets, perform crypto analysis, and gene
         currentHistory,
         `Role: Financial Analyst (KAYA)\n${systemPrompt}`,
         undefined,
-        'moonshotai/kimi-k2.5'
+        MODELS.FLASH
       );
     }
 

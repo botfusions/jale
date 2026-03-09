@@ -27,7 +27,6 @@ async function runGoogleQuery(query: string): Promise<any[]> {
   return [];
 }
 
-
 export async function getUnreadEmails(maxResults: number = 5): Promise<EmailSummary[]> {
   try {
     safeLog('Fetching unread emails via Google API (Placeholder)');
@@ -35,16 +34,6 @@ export async function getUnreadEmails(maxResults: number = 5): Promise<EmailSumm
     return [];
   } catch (error) {
     safeError('Failed to fetch unread emails', error);
-    return [];
-  }
-}
-
-export async function searchEmails(query: string, maxResults: number = 5): Promise<EmailSummary[]> {
-  try {
-    safeLog('Searching emails via Google API (Placeholder)', { query });
-    return [];
-  } catch (error) {
-    safeError('Failed to search emails', error);
     return [];
   }
 }

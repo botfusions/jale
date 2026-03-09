@@ -11,6 +11,7 @@
  */
 
 import { safeLog } from '../utils/logger';
+import { stateManager } from '../utils/state-manager';
 
 export interface SkillContext {
   userMessage: string;
@@ -40,6 +41,7 @@ class SkillManager {
 
   register(skill: Skill): void {
     this.skills.set(skill.name, skill);
+    stateManager.updateSkill(skill.name, skill.displayName, skill.emoji, skill.enabled);
     safeLog('Skill registered', { name: skill.name, enabled: skill.enabled });
   }
 
@@ -68,6 +70,7 @@ class SkillManager {
     const skill = this.skills.get(name);
     if (skill) {
       skill.enabled = true;
+      stateManager.updateSkill(skill.name, skill.displayName, skill.emoji, true);
       return true;
     }
     return false;
@@ -77,6 +80,7 @@ class SkillManager {
     const skill = this.skills.get(name);
     if (skill) {
       skill.enabled = false;
+      stateManager.updateSkill(skill.name, skill.displayName, skill.emoji, false);
       return true;
     }
     return false;

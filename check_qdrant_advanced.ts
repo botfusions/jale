@@ -9,10 +9,10 @@ const COLLECTION = process.env.QDRANT_COLLECTION;
 
 async function checkQdrant() {
   console.log(`Querying Qdrant: ${QDRANT_URL}/collections/${COLLECTION}`);
-  
+
   const headers = {
     'Content-Type': 'application/json',
-    'api-key': QDRANT_API_KEY || ''
+    'api-key': QDRANT_API_KEY || '',
   };
 
   try {
@@ -27,8 +27,8 @@ async function checkQdrant() {
       headers,
       body: JSON.stringify({
         limit: 10,
-        with_payload: true
-      })
+        with_payload: true,
+      }),
     });
     const scroll = await scrollRes.json();
     console.log('Recent Points:', JSON.stringify(scroll, null, 2));

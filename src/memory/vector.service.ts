@@ -51,7 +51,7 @@ async function ensureCollection(): Promise<void> {
 
   // 2. Try internal Docker fallback if external fails
   const internalFallback = 'http://qdrant:6333';
-  if (baseUrl !== internalFallback && await tryUrl(internalFallback)) {
+  if (baseUrl !== internalFallback && (await tryUrl(internalFallback))) {
     safeLog('Connected to Qdrant via internal Docker fallback', { internalFallback });
     // Update runtime env so subsequent calls use the working URL
     const { updateEnvRuntime } = await import('../config/env');
@@ -62,13 +62,13 @@ async function ensureCollection(): Promise<void> {
 
   // 3. Fallback to PUT (create) if reachable but not found
   try {
-     const res = await fetch(`${baseUrl}/collections/${collection}`, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({ vectors: { size: 1536, distance: 'Cosine' } }),
-        signal: AbortSignal.timeout(10000),
-      });
-      if (res.ok) collectionEnsured = true;
+    const res = await fetch(`${baseUrl}/collections/${collection}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({ vectors: { size: 1536, distance: 'Cosine' } }),
+      signal: AbortSignal.timeout(10000),
+    });
+    if (res.ok) collectionEnsured = true;
   } catch (error) {
     safeError('Qdrant connection/creation failed', error);
   }
@@ -122,7 +122,11 @@ export async function storeMemory(
   }
 }
 
-export async function recallMemories(query: string, userId: string, topK: number = 5): Promise<MemoryRecord[]> {
+export async function recallMemories(
+  query: string,
+  userId: string,
+  topK: number = 5
+): Promise<MemoryRecord[]> {
   const env = getEnv();
 
   if (env.VECTOR_DB_MOCK_MODE) {
@@ -196,16 +200,19 @@ export async function storeImageMemory(
     // Bu aşamada openrouter.ts içindeki chat fonksiyonunu kullanıyoruz.
     // Not: Vision desteği için mesaj yapısının image_url içermesi gerekir.
     const { chat } = await import('../llm/openrouter');
-    
+
     // Vision için OpenAI formatında mesaj içeriği hazırlıyoruz
     const visionMessages: any[] = [
       {
         role: 'user',
         content: [
-          { type: 'text', text: 'Bu resimde ne görüyorsun? Hafızada saklanmak üzere detaylı ama öz bir açıklama yap.' },
-          { type: 'image_url', image_url: { url: imageUrl } }
-        ]
-      }
+          {
+            type: 'text',
+            text: 'Bu resimde ne görüyorsun? Hafızada saklanmak üzere detaylı ama öz bir açıklama yap.',
+          },
+          { type: 'image_url', image_url: { url: imageUrl } },
+        ],
+      },
     ];
 
     const response = await chat(null, visionMessages, '', [], 'openai/gpt-4o-mini');
@@ -231,7 +238,13 @@ export async function storeImageMemory(
       method: 'PUT',
       headers,
       body: JSON.stringify({
-        points: [{ id, vector: embedding, payload: { text, source, timestamp, userId, type: 'image', imageUrl } }],
+        points: [
+          {
+            id,
+            vector: embedding,
+            payload: { text, source, timestamp, userId, type: 'image', imageUrl },
+          },
+        ],
       }),
       signal: AbortSignal.timeout(10000),
     });
@@ -240,7 +253,7 @@ export async function storeImageMemory(
       const errorText = await res.text();
       throw new Error(`Qdrant error (${res.status}): ${errorText}`);
     }
-    
+
     safeLog('Image memory stored in Qdrant', { id });
     return id;
   } catch (error) {

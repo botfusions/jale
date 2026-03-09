@@ -10,6 +10,7 @@ const envSchema = z.object({
   TELEGRAM_BOT_TOKEN: z.string().optional().default(''),
   TELEGRAM_ALLOWLIST_USER_ID: z.string().optional().default(''),
   TELEGRAM_ADMIN_USER_ID: z.string().optional().default(''),
+  TELEGRAM_WEBHOOK_URL: z.string().url().optional(),
 
   // LLM (OpenRouter)
   MODEL_API_KEY: z.string().min(1, 'MODEL_API_KEY is required'),

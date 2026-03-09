@@ -7,10 +7,12 @@ let runtime: any = null;
 
 async function getRuntime() {
   if (runtime) return runtime;
-  
+
   try {
     // Dynamic import to handle mcporter (ESM) in this CommonJS project
-    const { createRuntime } = await (eval('import("mcporter")') as Promise<typeof import('mcporter')>);
+    const { createRuntime } = await (eval('import("mcporter")') as Promise<
+      typeof import('mcporter')
+    >);
     runtime = await createRuntime();
     return runtime;
   } catch (error) {
@@ -38,7 +40,11 @@ export async function listMcpTools(serverName: string) {
 /**
  * Calls a specific tool on an MCP server.
  */
-export async function callMcpTool(server: string, toolName: string, args: Record<string, any> = {}) {
+export async function callMcpTool(
+  server: string,
+  toolName: string,
+  args: Record<string, any> = {}
+) {
   const rt = await getRuntime();
   console.log(`[MCP Utility] Calling tool ${toolName} on server ${server}...`);
   return rt.callTool(server, toolName, { args });
@@ -50,8 +56,9 @@ export async function callMcpTool(server: string, toolName: string, args: Record
  */
 export async function listAllMcpTools() {
   const servers = await listMcpServers();
-  const allTools: Array<{ server: string; name: string; description?: string; inputSchema?: any }> = [];
-  
+  const allTools: Array<{ server: string; name: string; description?: string; inputSchema?: any }> =
+    [];
+
   for (const server of servers) {
     try {
       const tools = await listMcpTools(server);
@@ -60,6 +67,6 @@ export async function listAllMcpTools() {
       console.warn(`[MCP Utility] Could not list tools for server ${server}:`, e);
     }
   }
-  
+
   return allTools;
 }

@@ -1,6 +1,7 @@
 import { Skill, SkillContext, SkillResult } from './skill-manager';
 import { safeLog, safeError } from '../utils/logger';
 import { chat } from '../llm/openrouter';
+import { MODELS } from '../config/constants';
 
 export const marketingSkill: Skill = {
   name: 'marketing',
@@ -37,8 +38,8 @@ Sert, kurnaz, yaratıcı ve çok profesyonel bir metin yazarısın.
 - Türkçe yanıt ver.
       `.trim();
 
-      // IMPORTANT: Explicitly bypass the system model and use minimax-2.5 for the marketing persona
-      const response = await chat(query, [], systemPrompt, undefined, 'minimax/minimax-01-2.5-pro');
+      // IMPORTANT: Explicitly bypass the system model and use flash for the marketing persona
+      const response = await chat(query, [], systemPrompt, undefined, MODELS.FLASH);
 
       return {
         text: `💡 **Pazarlama Stratejisi & Reklam Kopyası:**\n\n${response.content}`,

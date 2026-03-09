@@ -1,7 +1,9 @@
 import { chat, LLMMessage, LLMResponse, LLMContent } from '../llm/openrouter';
+import { MODELS } from '../config/constants';
 import { safeLog, safeError } from '../utils/logger';
 import { skillManager, Skill, SkillContext } from '../skills/skill-manager';
 import { AgentGuard } from '../security/agent-guard';
+import { stateManager } from '../utils/state-manager';
 
 export class CEOAgent {
   private name: string = 'JALE';
@@ -11,7 +13,12 @@ export class CEOAgent {
     this.guard = AgentGuard.getInstance();
   }
 
-  public async processRequest(userInput: LLMContent, userId: string, history: LLMMessage[] = []): Promise<LLMResponse> {
+  public async processRequest(
+    userInput: LLMContent,
+    userId: string,
+    history: LLMMessage[] = []
+  ): Promise<LLMResponse> {
+    stateManager.setAgentStatus(this.name, 'Meşgul', 'Kullanıcı isteği işleniyor');
     safeLog(`${this.name} processing user request`);
 
     // 1. Sanitize input
@@ -126,7 +133,7 @@ Core Memory: **Qdrant** (Vector DB) for long-term recall.
         currentHistory,
         `Role: CEO (JALE)\n${systemPrompt}`,
         tools as any,
-        'google/gemini-3-flash-preview'
+        MODELS.JALE
       );
 
       // Append assistant's response to history
@@ -138,6 +145,7 @@ Core Memory: **Qdrant** (Vector DB) for long-term recall.
 
       if (!response.tool_calls || response.tool_calls.length === 0) {
         // No more tools requested, final response is ready
+        stateManager.setAgentStatus(this.name, 'Aktif', 'Cevap hazır');
         safeLog(`${this.name} response ready after ${rounds} rounds`);
         return response;
       }
@@ -167,7 +175,7 @@ Core Memory: **Qdrant** (Vector DB) for long-term recall.
                     [],
                     `Role: ${name}\nInstructions: ${instructions}`,
                     [],
-                    'google/gemini-3-flash-preview'
+                    MODELS.FLASH
                   );
                   return { text: subResponse.content };
                 },
@@ -221,8 +229,9 @@ Core Memory: **Qdrant** (Vector DB) for long-term recall.
       currentHistory,
       `Role: CEO (JALE)\n${systemPrompt}`,
       undefined, // tools
-      'anthropic/claude-sonnet-4.6'
+      MODELS.PROGRAMMER
     );
+    stateManager.setAgentStatus(this.name, 'Aktif', 'Maksimum tur sınırına ulaşıldı');
     return finalResponse;
   }
 }

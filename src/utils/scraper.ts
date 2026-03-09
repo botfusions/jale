@@ -15,10 +15,10 @@ export interface ScrapeResult {
 
 export async function scrapeWithScrapling(url: string): Promise<ScrapeResult> {
   const scriptPath = path.join(process.cwd(), 'scripts', 'scraper.py');
-  
+
   try {
     safeLog('Launching Scrapling Python script', { url });
-    
+
     // Command to run python script
     // Note: Using 'python' or 'python3' depending on environment
     const command = `python "${scriptPath}" "${url}"`;
@@ -35,7 +35,7 @@ export async function scrapeWithScrapling(url: string): Promise<ScrapeResult> {
     return {
       status: 'error',
       url,
-      message: error.message
+      message: error.message,
     };
   }
 }

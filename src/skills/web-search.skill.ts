@@ -30,11 +30,11 @@ export const webSearchSkill: Skill = {
 
       // Try Brave Search first
       const braveResults = await searchBrave(query);
-      
+
       if (braveResults.length > 0) {
-        const results = braveResults.slice(0, 3).map(r => 
-          `**${r.title}**\n${r.description}\n[Kaynak](${r.url})`
-        );
+        const results = braveResults
+          .slice(0, 3)
+          .map((r) => `**${r.title}**\n${r.description}\n[Kaynak](${r.url})`);
 
         return {
           text: `🔍 **Brave ile "${query}" İçin Arama Sonuçları:**\n\n` + results.join('\n\n'),
@@ -72,7 +72,10 @@ export const webSearchSkill: Skill = {
       let limit = 0;
       for (const match of resultMatches) {
         if (limit >= 3) break;
-        const m = /<a class="result__url" href="([^"]+)".*?>(.*?)<\/a>.*?<a class="result__snippet[^>]+>(.*?)<\/a>/is.exec(match);
+        const m =
+          /<a class="result__url" href="([^"]+)".*?>(.*?)<\/a>.*?<a class="result__snippet[^>]+>(.*?)<\/a>/is.exec(
+            match
+          );
         if (m && m.length === 4) {
           let href = m[1].trim();
           if (href.startsWith('//')) {

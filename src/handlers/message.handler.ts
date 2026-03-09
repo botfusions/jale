@@ -335,17 +335,21 @@ export async function handleTextMessage(ctx: Context): Promise<void> {
               // Notify user that Jale is delegating
               const delegationEmoji = '🔄';
               const agentEmoji = skill.emoji || '🤖';
-              const agentName = skill.displayName.split('(')[1]?.replace(')', '') || skillName.toUpperCase();
-              
-              await safeReply(ctx, `${delegationEmoji} **JALE -> ${agentName}:**\n_"${args.request}"_`);
+              const agentName =
+                skill.displayName.split('(')[1]?.replace(')', '') || skillName.toUpperCase();
+
+              await safeReply(
+                ctx,
+                `${delegationEmoji} **JALE -> ${agentName}:**\n_"${args.request}"_`
+              );
               await ctx.api.sendChatAction(ctx.chat!.id, 'typing');
 
               const res = await skill.execute({ userMessage: args.request, userId });
               toolResult = res.text;
-              
+
               // Notify user that the agent has responded
               await safeReply(ctx, `${agentEmoji} **${agentName}:**\n\n${toolResult}`);
-              
+
               safeLog('Tool execution success', {
                 skill: skillName,
                 result: toolResult.substring(0, 100) + '...',
@@ -353,7 +357,9 @@ export async function handleTextMessage(ctx: Context): Promise<void> {
             } catch (err: any) {
               safeError(`Tool execution failed: ${skillName}`, err);
               toolResult = `Hata: ${err.message}`;
-              await ctx.reply(`⚠️ **${skillName}** işlemi sırasında bir hata oluştu: ${err.message}`);
+              await ctx.reply(
+                `⚠️ **${skillName}** işlemi sırasında bir hata oluştu: ${err.message}`
+              );
             }
           } else {
             toolResult = `Skill ${skillName} bulunamadı veya kapalı.`;
@@ -622,9 +628,9 @@ export async function handleDocumentMessage(ctx: Context, bot: Bot): Promise<voi
     if (['.txt', '.md', '.json', '.ts', '.js'].includes(extension)) {
       fileContent = fs.readFileSync(filePath, 'utf-8');
     } else if (extension === '.pdf') {
-       // PDF parsing can be complex, for now we just acknowledge it
-       // In a full implementation, we'd use 'pdf-parse'
-       fileContent = `[PDF Dosyası: ${doc.file_name}] (PDF içeriği doğrudan okunamadı, ancak dosya sisteme alındı.)`;
+      // PDF parsing can be complex, for now we just acknowledge it
+      // In a full implementation, we'd use 'pdf-parse'
+      fileContent = `[PDF Dosyası: ${doc.file_name}] (PDF içeriği doğrudan okunamadı, ancak dosya sisteme alındı.)`;
     } else {
       fileContent = `[Dosya: ${doc.file_name}, Tip: ${doc.mime_type}]`;
     }

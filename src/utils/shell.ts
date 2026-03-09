@@ -1,8 +1,11 @@
 import { spawn } from 'child_process';
 import { safeLog } from './logger';
 
-export async function spawnCommand(command: string, args: string[] | string | undefined | null): Promise<any> {
-    const normalizedArgs = Array.isArray(args) ? args : (args ? [args] : []);
+export async function spawnCommand(
+  command: string,
+  args: string[] | string | undefined | null
+): Promise<any> {
+  const normalizedArgs = Array.isArray(args) ? args : args ? [args] : [];
   return new Promise((resolve, reject) => {
     const child = spawn(command, normalizedArgs, {
       cwd: process.cwd(),
